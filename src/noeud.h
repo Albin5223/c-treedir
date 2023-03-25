@@ -221,6 +221,10 @@ noeud *retourRacine(noeud *p){
     return p->racine;
 }
 
+noeud *retourPere(noeud *p){
+    return p->pere;
+}
+
 /**
  * Cette fonction verifie si un nom existe déja dans les fils du noeud courant
  * @param p noeud courant
@@ -243,12 +247,24 @@ bool verifierNomDejaExistant(noeud *p, char *nom){
     return false;
 }
 
+noeud *initFichier(noeud *pere, char *nom){
+    if(!verifierNomDejaExistant(pere,nom)){
+        puts("Nom de Fichier deja Existant");
+        return NULL;
+    }
+    noeud *n = initNode(nom);
+    n->est_dossier=false;
+    n->pere=pere;
+    n->racine=pere->racine;
+}
+
+
 /**
  * Cette fonction permet de créer un dossier vierge, sans père ni fils
  * @param nom Le nom du dossier
  * @return Le noeud du dossier
 */
-noeud *initDossier(char *nom){
+noeud *initDossierSimple(char *nom){
     noeud *dossier = initNode(nom);
     dossier->est_dossier = true;
     return dossier;
@@ -261,12 +277,15 @@ noeud *initDossier(char *nom){
  * @return Le noeud du nouveau dossier
 */
 noeud *initDossier(noeud *pere,char *nom){
-    noeud *dossier = initDossier(nom);
     if(!verifierNomDejaExistant(pere,nom)){
+        puts("Nom de Dossier deja Existant");
         return NULL;
     }
+    noeud *dossier = initDossierSimple(nom);
+    
     dossier->racine=pere->racine;
     dossier->pere=pere;
+
 
     //On ajoute ce noeud dans les fils du noeud courant
     liste_noeud *m = malloc(sizeof(liste_noeud));
@@ -282,9 +301,41 @@ noeud *initDossier(noeud *pere,char *nom){
 
         tmp->succ=m;
     }
+
+    pere->fils=addToListAlpha(pere->fils,dossier);
     
     return dossier;
-
-
-
 }
+
+/**
+ * Cette fonction renvoie le dossier qui porte le nom chem dans le noeud "p"
+ * @param courant Le dossier dans lequel on veut chercher le chemin
+ * @param nom Le nom du dossier dans lequel on veut y aller
+ * @return Le noeud du dossier portant le nom nom
+*/
+
+noeud *allerVers(noeud *courant,char *chem){
+
+    liste_noeud *tmp = courant->fils;
+    while(tmp !=NULL){
+        noeud *p = tmp->no;
+        if(p->est_dossier && strcmp(chem,p->nom)){
+            return p;
+        }
+        tmp=tmp->succ;
+    }
+    return NULL;
+}
+
+
+void afficheCheminVersRacine(noeud *courant){
+    if(courant->pere==courant){
+        printf("%s/",courant->nom);
+    }
+    else{
+        afficheCheminVersRacine(courant->pere);
+        printf("%s/",courant->nom);
+    }
+}
+
+
