@@ -51,8 +51,20 @@ liste_noeud *initList(noeud *tete){
     return list;
 }
 
+/**
+ * Cette fonction permet d'ajouter dans une liste un noeud, dans l'ordre alphabétique + trier par type (dossier/non-dossier)
+ * PS : Les dossiers seront donc toujours avant les non-dossiers, et dans chacun des deux blocs, il y aura un tri alphabetique
+ * @param list La liste dans laquelle on veut ajouter le noeud
+ * @param noeud Le noeud à ajouter
+ * @return La nouvelle tete de la liste (au cas ou elle a été changée)
+*/
 liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     assert(list != NULL || node != NULL);
+
+    if(verifierNomDejaExistant(list->no->pere,node->nom)){
+        puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
+        return list;
+    }
 
     liste_noeud *newList = initList(node);
     liste_noeud *prev = NULL;
@@ -60,8 +72,34 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
 
     if(!node->est_dossier){                 // CAS 1 : Si le noeud est un dossier, on veut l'ajouter dans la première partie avec les dossiers      
         while(tmp != NULL && tmp->no->est_dossier){
-            // EN TRAIN D'ETRE FAIT
+            if(node->nom < tmp->no->nom){       // On trouve l'emplacement
+                if(prev == NULL){           // CAS 1.1 : Le dossier doit etre placé au tout début
+                    newList->succ = list;
+                    return newList;
+                }
+                else{                       // CAS 1.2 : Le dossier doit être placé entre d'autres dossiers
+                    prev->succ = newList;
+                    newList->succ = tmp;
+                    return list;
+                }
+            }
+            prev = tmp;
+            tmp = tmp->succ;
         }
+        // CAS 1.3 : Le dossier doit être placé à la fin des dossiers
+        if(prev == NULL){   // CAS 1.3.1 : Il n'y avait en faite pas de dossier
+            if(tmp == NULL){    // CAS 1.3.1.1 : Il n'y avait pas de non-dossier non plus
+                return newList;
+            }
+            else{               // CAS 1.2.1.2 : Il y avait au moins 1 non-dossier
+                newList->succ = tmp;
+                return newList;
+            }
+        }
+        // CAS 1.3.2 : Il y avait au moins un dossier derrière
+        prev->succ = newList;
+        newList->succ = tmp;
+        return list;
     }
     else{                               // CAS 2 : Si le noeud qu'on veut ajouter n'est pas un dossier, on veut donc l'ajouter dans la seconde partie avec les non-dossier
         while (tmp != NULL && tmp->no->est_dossier){    // On traverse tous les dossiers
