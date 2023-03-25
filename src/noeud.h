@@ -237,6 +237,8 @@ void remove(noeud *node){
                 prev->succ = tmp->succ;
             }
         }
+        prev = tmp;
+        tmp = tmp->succ;
     }
 
     // ETAPE 2 : "free" tous les noeuds
