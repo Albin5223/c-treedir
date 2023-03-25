@@ -204,6 +204,46 @@ void addNodeToFilsOfNode(noeud *pere, noeud *fils){
 }
 
 /**
+ * Fonction qui permet de free récursivement un noeud ainsi que ses fils
+ * @param node Le noeud à free
+*/
+void freeRecInNode(noeud *node){
+    liste_noeud *tmp = node->fils;
+    while (tmp != NULL){
+        freeRecInNode(tmp->no);
+        tmp = tmp->succ;
+    }
+    free(node->fils);
+    free(node);
+}
+
+/**
+ * Fonction qui permet de supprimer complètement un noeud de l'arborescence
+ * @param node Le noeud à supprimer
+*/
+void remove(noeud *node){
+    noeud *pere = node->pere;
+
+    liste_noeud *prev = NULL;
+    liste_noeud *tmp = pere->fils;
+
+    // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
+    while(tmp != NULL){
+        if(tmp == node){    // On trouve ou est le noeud
+            if(prev == NULL){   // Le noeud est au début
+                pere->fils = tmp->succ;
+            }
+            else{               // Le noeud est plus loin
+                prev->succ = tmp->succ;
+            }
+        }
+    }
+
+    // ETAPE 2 : "free" tous les noeuds
+    freeRecInNode(node);
+}
+
+/**
  * Permet d'afficher tout le contenu du noeud
  * @param node noeud à afficher
 */
@@ -343,7 +383,6 @@ noeud *initDossier(noeud *pere,char *nom){
  * @param nom Le nom du dossier dans lequel on veut y aller
  * @return Le noeud du dossier portant le nom nom
 */
-
 noeud *allerVers(noeud *courant,char *chem){
 
     liste_noeud *tmp = courant->fils;
