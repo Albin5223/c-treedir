@@ -4,6 +4,7 @@
 
 noeud *initRacine(){
     noeud *p=initNode("Racine");
+    p->est_dossier = true;
     p->pere=p;
     p->racine=p;
     return p;

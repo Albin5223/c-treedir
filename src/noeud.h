@@ -30,6 +30,7 @@ liste_noeud *initList(noeud *tete);
 unsigned int size(liste_noeud *list);
 unsigned int sizeOfFils(noeud *node);
 liste_noeud *addToListAlpha(liste_noeud *list, noeud *node);
+void addNodeToFilsOfNode(noeud *pere, noeud *fils);
 void print(noeud *node);
 void printNameWithType(noeud *node);
 void afficheFils(noeud *p);
@@ -191,6 +192,17 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     }
 }
 
+void addNodeToFilsOfNode(noeud *pere, noeud *fils){
+    fils->pere = pere;
+    fils->racine = pere->racine;
+    if(pere->fils == NULL){
+        pere->fils = initList(fils);
+    }
+    else{
+        pere->fils = addToListAlpha(pere->fils,fils);
+    }
+}
+
 /**
  * Permet d'afficher tout le contenu du noeud
  * @param node noeud à afficher
@@ -206,6 +218,7 @@ void print(noeud *node){
     liste_noeud *tmp = node->fils;
     while (tmp != NULL){
         printNameWithType(tmp->no);printf(", ");
+        tmp = tmp->succ;
     }
     puts("");
 
@@ -284,14 +297,7 @@ noeud *initFichier(noeud *pere, char *nom){
     n->pere=pere;
     n->racine=pere->racine;
 
-    if(pere->fils==NULL){
-        liste_noeud *m = malloc(sizeof(liste_noeud));
-        m->no=n;
-        pere->fils=m;
-    }
-    else{
-        pere->fils=addToListAlpha(pere->fils,n);
-    }
+    addNodeToFilsOfNode(pere,n);
 
     return n;
 }
@@ -326,17 +332,8 @@ noeud *initDossier(noeud *pere,char *nom){
 
 
     //On ajoute ce noeud dans les fils du noeud courant
-    
-    if(pere->fils==NULL){
-        liste_noeud *m = malloc(sizeof(liste_noeud));
-        m->no=dossier;
-        pere->fils=m;
-    }
-    else{
-        pere->fils=addToListAlpha(pere->fils,dossier);
-    }
-    
-    
+    addNodeToFilsOfNode(pere,dossier);
+
     return dossier;
 }
 
