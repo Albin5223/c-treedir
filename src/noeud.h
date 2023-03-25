@@ -54,7 +54,7 @@ noeud *initNode(char *c){
     noeud *node = malloc(sizeof(noeud));
     assert(node != NULL);
     node->est_dossier = false;
-    for(size_t i = 0;i<strlen(c);i++){
+    for(size_t i = 0;i<strlen(c)+1;i++){
         *(node->nom+i)=*(c+i);
     }
     node->pere = NULL;
