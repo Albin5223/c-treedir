@@ -52,6 +52,33 @@ liste_noeud *initList(noeud *tete){
 }
 
 /**
+ * Fonction qui permet de donner la taille d'une liste
+ * @param list La liste
+ * @return la taille de la liste
+*/
+unsigned int size(liste_noeud *list){
+    unsigned int size = 1;
+    liste_noeud *tmp = list;
+    while (tmp->succ != NULL){
+        ++size;
+        tmp = tmp->succ;
+    }
+    return size;
+}
+
+/**
+ * Fonction qui donne le nombre de fils que possède un noeud
+ * @param node Le noeud
+ * @return Le nombre de fils de ce noeud
+*/
+unsigned int sizeOfFils(noeud *node){
+    if(node->fils == NULL){
+        return 0;
+    }
+    return size(node->fils);
+}
+
+/**
  * Cette fonction permet d'ajouter dans une liste un noeud, dans l'ordre alphabétique + trier par type (dossier/non-dossier)
  * PS : Les dossiers seront donc toujours avant les non-dossiers, et dans chacun des deux blocs, il y aura un tri alphabetique
  * @param list La liste dans laquelle on veut ajouter le noeud
@@ -141,12 +168,42 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
 
 /**
  * Permet d'afficher tout le contenu du noeud
- * @param p noeud à afficher
+ * @param node noeud à afficher
 */
-void print(noeud *p){
-    // TODO : faire un print comme demander sur le pdf
+void print(noeud *node){
+    printf("Noeud ");printNameWithType(node);printf(", ");
+
+    printf("pere : %s, ",node->pere->nom);
+
+    unsigned int tfils = sizeOfFils(node);
+    printf("%u fils : ",tfils);
+
+    liste_noeud *tmp = node->fils;
+    while (tmp != NULL){
+        printNameWithType(tmp->no);printf(", ");
+    }
+    puts("");
+
+    tmp = node->fils;
+    while (tmp != NULL){
+        print(tmp->no);
+        tmp = tmp->succ;
+    }
 }
 
+/**
+ * Petite méthode auxiliaire pour afficher le nom d'un noeud ainsi que son type
+ * @param node Le noeud en question
+*/
+void printNameWithType(noeud *node){
+    printf("%s ",node->nom);
+    node->est_dossier ? printf("(D)") : printf("(F)");
+}
+
+/**
+ * Fonction qui affiche ligne par ligne, le nom de chaque fils d'un noeud
+ * @param p le noeud en question
+*/
 void afficheFils(noeud *p){
     liste_noeud *tmp = p->fils;
 
