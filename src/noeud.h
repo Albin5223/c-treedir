@@ -126,6 +126,10 @@ noeud *retourRacine(noeud *p){
     return p->racine;
 }
 
+noeud *retourPere(noeud *p){
+    return p->pere;
+}
+
 /**
  * Cette fonction verifie si un nom existe déja dans les fils du noeud courant
  * @param p noeud courant
@@ -189,7 +193,4 @@ noeud *initDossier(noeud *pere,char *nom){
     }
     
     return dossier;
-
-
-
 }
