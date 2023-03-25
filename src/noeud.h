@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<stdbool.h>
-
+#include<assert.h>
 
 struct noeud;
 struct liste_noeud;
@@ -23,6 +23,27 @@ struct liste_noeud {
 };
 typedef struct liste_noeud liste_noeud;
 
+
+
+noeud *initNode(char *c);
+liste_noeud *initList(noeud *tete);
+unsigned int size(liste_noeud *list);
+unsigned int sizeOfFils(noeud *node);
+liste_noeud *addToListAlpha(liste_noeud *list, noeud *node);
+void print(noeud *node);
+void printNameWithType(noeud *node);
+void afficheFils(noeud *p);
+void afficheNom(noeud *p);
+noeud *retourRacine(noeud *p);
+noeud *retourPere(noeud *p);
+bool verifierNomDejaExistant(noeud *p, char *nom);
+noeud *initFichier(noeud *pere, char *nom);
+noeud *initDossierSimple(char *nom);
+noeud *initDossier(noeud *pere,char *nom);
+noeud *allerVers(noeud *courant,char *chem);
+void afficheCheminVersRacine(noeud *courant);
+
+
 /**
  * Cette fonction permet d'initialiser un noeud
  * @warning Ses attributs sont initialisés à false et NULL partout (à part le nom), il faut donc les changer en fonction du contexte
@@ -32,10 +53,14 @@ noeud *initNode(char *c){
     noeud *node = malloc(sizeof(noeud));
     assert(node != NULL);
     node->est_dossier = false;
-    node->nom[0] = c;
+    for(size_t i = 0;i<strlen(c);i++){
+        *(node->nom+i)=*(c+i);
+    }
     node->pere = NULL;
     node->racine = NULL;
-    node->fils = NULL;  
+    node->fils = NULL;
+
+    return node;
 }
 
 /**
@@ -214,7 +239,8 @@ void afficheFils(noeud *p){
 }
 
 void afficheNom(noeud *p){
-    printf("%s \n",p->nom);
+    printf("%s",p->nom);
+    p->est_dossier ? printf("/\n") : printf("\n");
 }
 
 noeud *retourRacine(noeud *p){
@@ -243,12 +269,13 @@ bool verifierNomDejaExistant(noeud *p, char *nom){
         if(trouve == 0){
             return true;
         }
+        tmp=tmp->succ;
     }
     return false;
 }
 
 noeud *initFichier(noeud *pere, char *nom){
-    if(!verifierNomDejaExistant(pere,nom)){
+    if(verifierNomDejaExistant(pere,nom)){
         puts("Nom de Fichier deja Existant");
         return NULL;
     }
@@ -256,6 +283,17 @@ noeud *initFichier(noeud *pere, char *nom){
     n->est_dossier=false;
     n->pere=pere;
     n->racine=pere->racine;
+
+    if(pere->fils==NULL){
+        liste_noeud *m = malloc(sizeof(liste_noeud));
+        m->no=n;
+        pere->fils=m;
+    }
+    else{
+        pere->fils=addToListAlpha(pere->fils,n);
+    }
+
+    return n;
 }
 
 
@@ -277,7 +315,7 @@ noeud *initDossierSimple(char *nom){
  * @return Le noeud du nouveau dossier
 */
 noeud *initDossier(noeud *pere,char *nom){
-    if(!verifierNomDejaExistant(pere,nom)){
+    if(verifierNomDejaExistant(pere,nom)){
         puts("Nom de Dossier deja Existant");
         return NULL;
     }
@@ -288,21 +326,16 @@ noeud *initDossier(noeud *pere,char *nom){
 
 
     //On ajoute ce noeud dans les fils du noeud courant
-    liste_noeud *m = malloc(sizeof(liste_noeud));
-    m->no=dossier;
+    
     if(pere->fils==NULL){
+        liste_noeud *m = malloc(sizeof(liste_noeud));
+        m->no=dossier;
         pere->fils=m;
     }
     else{
-        liste_noeud *tmp = pere->fils;
-        while (tmp->succ!=NULL){  
-            tmp = tmp->succ;
-        }
-
-        tmp->succ=m;
+        pere->fils=addToListAlpha(pere->fils,dossier);
     }
-
-    pere->fils=addToListAlpha(pere->fils,dossier);
+    
     
     return dossier;
 }
@@ -319,7 +352,7 @@ noeud *allerVers(noeud *courant,char *chem){
     liste_noeud *tmp = courant->fils;
     while(tmp !=NULL){
         noeud *p = tmp->no;
-        if(p->est_dossier && strcmp(chem,p->nom)){
+        if(p->est_dossier && strcmp(chem,p->nom)==0){
             return p;
         }
         tmp=tmp->succ;
@@ -329,8 +362,8 @@ noeud *allerVers(noeud *courant,char *chem){
 
 
 void afficheCheminVersRacine(noeud *courant){
-    if(courant->pere==courant){
-        printf("%s/",courant->nom);
+    if(strcmp(courant->nom,courant->racine->nom)==0){
+        printf("%s",courant->nom);
     }
     else{
         afficheCheminVersRacine(courant->pere);
