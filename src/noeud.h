@@ -43,6 +43,8 @@ noeud *initDossierSimple(char *nom);
 noeud *initDossier(noeud *pere,char *nom);
 noeud *allerVers(noeud *courant,char *chem);
 void afficheCheminVersRacine(noeud *courant);
+noeud *copyNode(noeud *node);
+liste_noeud *copyList(liste_noeud *list);
 
 
 /**
@@ -192,6 +194,39 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     }
 }
 
+/**
+ * Fonction qui ajoute en fin de liste un noeud
+ * @warning Cette fonction est surtout utilisée dans la méthode de copie
+ * @param list La liste dans laquelle on veut ajouter le noeud
+ * @param noeud Le noeud à ajouter
+*/
+void addToListLast(liste_noeud *list, noeud *node){
+    assert(list != NULL || node != NULL);
+    if(verifierNomDejaExistant(list->no->pere,node->nom)){
+        puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
+        return;
+    }
+
+    liste_noeud *newList = initList(node);
+    liste_noeud *prev = NULL;
+    liste_noeud *tmp = list;
+
+    while (tmp != NULL){
+        prev = tmp;
+        tmp = tmp->succ;
+    }
+    if(prev == NULL){
+        puts("Message d'erreur : Il y avait une liste avec un attribut 'no' = NULL (situation anormale)");
+        return;
+    }
+    prev->succ = newList;
+}
+
+/**
+ * Cette fonction ajoute un noeud dans la liste de fils d'un autre noeud
+ * @param pere Ce noeud est le pere qui se voit rajouter un fils
+ * @param fils Le noeud qui devient le fils
+*/
 void addNodeToFilsOfNode(noeud *pere, noeud *fils){
     fils->pere = pere;
     fils->racine = pere->racine;
@@ -233,9 +268,10 @@ void removeNode(noeud *node){
             if(prev == NULL){   // Le noeud est au début
                 pere->fils = tmp->succ;
             }
-            else{               // Le noeud est plus loin
+            else{                   // Le noeud est plus loin
                 prev->succ = tmp->succ;
             }
+            break;
         }
         prev = tmp;
         tmp = tmp->succ;
@@ -243,6 +279,81 @@ void removeNode(noeud *node){
 
     // ETAPE 2 : "free" tous les noeuds
     freeRecInNode(node);
+}
+
+/**
+ * Cette fonction déplace un noeud vers un nouveau père
+ * @param nomade Le noeud qui va se déplacer
+ * @param newPere Le nouveau père du noeud nomade
+*/
+void moveNode(noeud *nomade, noeud *newPere){
+    if(nomade->pere == NULL){
+        puts("Message d'erreur : Le noeud que vous voulez DEPLACER n'a pas de pere (situation anormale)");
+        return;
+    }
+
+    noeud *pere = nomade->pere;
+
+    liste_noeud *prev = NULL;
+    liste_noeud *tmp = pere->fils;
+
+    // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
+    while(tmp != NULL){
+        if(tmp->no == nomade){  // On trouve ou est le noeud
+            if(prev == NULL){       // Le noeud est au début
+                pere->fils = tmp->succ;
+            }
+            else{                   // Le noeud est plus loin
+                prev->succ = tmp->succ;
+            }
+            break;
+        }
+        prev = tmp;
+        tmp = tmp->succ;
+    }
+
+    // ETAPE 2 : Ajouter le nomade comme fils du nouveau pere
+    addNodeToFilsOfNode(newPere,nomade);
+}
+
+/**
+ * @warning Cette fonction renvoie un noeud, qui est belle et bien une copie de "node", MAIS cette copie n'a pas de pere, ni de racine, il faut donc les mettre à jour par la suite
+ * @param node Le noeud à copier
+ * @return Une copie de node
+*/
+noeud *copyNode(noeud *node){
+    size_t fullLength = strlen(node->nom)+1;
+    char *nom = malloc(sizeof(char)*fullLength);
+    assert(nom != NULL);
+    strncpy(nom,node->nom,fullLength);
+
+    noeud *copy = initNode(nom);
+    copy->est_dossier = node->est_dossier;
+    if(node->fils != NULL){
+        copy->fils = copyList(node->fils);
+    }
+    return copy;
+}
+
+/**
+ * Cette fonction renvoie une copie d'une liste
+ * @param list La liste à copier
+ * @return Une copie de cette liste
+*/
+liste_noeud *copyList(liste_noeud *list){
+    liste_noeud *copy = initList(copyNode(list->no));
+
+    liste_noeud *tmp = list->succ;
+    while (tmp != NULL){
+        /**
+         * Pourquoi faire un addToListLast et non pas addToListAlpha ?
+         * La réponse est simple : la liste que nous voulons copier est normalement toujours trié dans la manière que nous voulons
+         * Donc autant simplement ajouter les éléments les un après les autres, puisque c'est déjà trié
+        */
+        addToListLast(copy,copyNode(tmp->no));
+        tmp = tmp->succ;
+    }
+    return copy;
 }
 
 /**
