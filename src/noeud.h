@@ -226,7 +226,7 @@ void freeRecInNode(noeud *node){
  * Fonction qui permet de supprimer complètement un noeud de l'arborescence
  * @param node Le noeud à supprimer
 */
-void remove(noeud *node){
+void removeNode(noeud *node){
     if(node->pere == NULL){
         puts("Message d'erreur : Le noeud que vous voulez SUPPRIMER n'a pas de pere (situation anormale)");
         return;
@@ -260,7 +260,7 @@ void remove(noeud *node){
  * @param nomade Le noeud qui va se déplacer
  * @param newPere Le nouveau père du noeud nomade
 */
-void move(noeud *nomade, noeud *newPere){
+void moveNode(noeud *nomade, noeud *newPere){
     if(nomade->pere == NULL){
         puts("Message d'erreur : Le noeud que vous voulez DEPLACER n'a pas de pere (situation anormale)");
         return;
