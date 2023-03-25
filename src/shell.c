@@ -21,10 +21,28 @@ noeud *cd(noeud *courant,char *chem){
             return retourPere(courant);
         }
         else{
-            
+            noeud *p=allerVers(courant,chem);
+            if(p==NULL){
+                puts("Dossier inexistant");
+                return EXIT_FAILURE;
+            }
+            return p;
         }
     }
 }
+
+void pwd(noeud *courant){
+    afficheCheminVersRacine(courant);
+}
+
+void mkdir(noeud *courant,char *nom){
+    noeud *nouveauDossier = initDossier(courant, nom);
+}
+
+void touch(noeud *courant,char *nom){
+    noeud *nouveauFichier = initFichier(courant,nom);
+}
+
 
 
 
