@@ -192,6 +192,11 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     }
 }
 
+/**
+ * Cette fonction ajoute un noeud dans la liste de fils d'un autre noeud
+ * @param pere Ce noeud est le pere qui se voit rajouter un fils
+ * @param fils Le noeud qui devient le fils
+*/
 void addNodeToFilsOfNode(noeud *pere, noeud *fils){
     fils->pere = pere;
     fils->racine = pere->racine;
@@ -222,6 +227,10 @@ void freeRecInNode(noeud *node){
  * @param node Le noeud à supprimer
 */
 void remove(noeud *node){
+    if(node->pere == NULL){
+        puts("Message d'erreur : Le noeud que vous voulez SUPPRIMER n'a pas de pere (situation anormale)");
+        return;
+    }
     noeud *pere = node->pere;
 
     liste_noeud *prev = NULL;
@@ -229,13 +238,14 @@ void remove(noeud *node){
 
     // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
     while(tmp != NULL){
-        if(tmp == node){    // On trouve ou est le noeud
-            if(prev == NULL){   // Le noeud est au début
+        if(tmp->no == node){    // On trouve ou est le noeud
+            if(prev == NULL){       // Le noeud est au début
                 pere->fils = tmp->succ;
             }
-            else{               // Le noeud est plus loin
+            else{                   // Le noeud est plus loin
                 prev->succ = tmp->succ;
             }
+            break;
         }
         prev = tmp;
         tmp = tmp->succ;
@@ -243,6 +253,41 @@ void remove(noeud *node){
 
     // ETAPE 2 : "free" tous les noeuds
     freeRecInNode(node);
+}
+
+/**
+ * Cette fonction déplace un noeud vers un nouveau père
+ * @param nomade Le noeud qui va se déplacer
+ * @param newPere Le nouveau père du noeud nomade
+*/
+void move(noeud *nomade, noeud *newPere){
+    if(nomade->pere == NULL){
+        puts("Message d'erreur : Le noeud que vous voulez DEPLACER n'a pas de pere (situation anormale)");
+        return;
+    }
+
+    noeud *pere = nomade->pere;
+
+    liste_noeud *prev = NULL;
+    liste_noeud *tmp = pere->fils;
+
+    // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
+    while(tmp != NULL){
+        if(tmp->no == nomade){  // On trouve ou est le noeud
+            if(prev == NULL){       // Le noeud est au début
+                pere->fils = tmp->succ;
+            }
+            else{                   // Le noeud est plus loin
+                prev->succ = tmp->succ;
+            }
+            break;
+        }
+        prev = tmp;
+        tmp = tmp->succ;
+    }
+
+    // ETAPE 2 : Ajouter le nomade comme fils du nouveau pere
+    addNodeToFilsOfNode(newPere,nomade);
 }
 
 /**
