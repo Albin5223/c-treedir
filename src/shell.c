@@ -3,7 +3,7 @@
 #include<stdio.h>
 
 noeud *initRacine(){
-    noeud *p=initNode("Racine");
+    noeud *p=initNode("");
     p->est_dossier = true;
     p->pere=p;
     p->racine=p;
@@ -89,6 +89,11 @@ int main(){
     puts("--------------------------TEST 5--------------");
     courant=cd(courant,"");
     ls(courant);
+
+
+    puts("--------------------------TEST 6--------------");
+    print(courant);
+
 
 
     
