@@ -23,6 +23,7 @@ noeud *cd(noeud *courant,char *chem){
             return retourPere(courant);
         }
         else{
+            
             noeud *p=allerVers(courant,chem);
             if(p==NULL){
                 puts("Dossier inexistant");

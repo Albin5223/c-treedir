@@ -221,7 +221,7 @@ void freeRecInNode(noeud *node){
  * Fonction qui permet de supprimer complètement un noeud de l'arborescence
  * @param node Le noeud à supprimer
 */
-void remove(noeud *node){
+void removeNode(noeud *node){
     noeud *pere = node->pere;
 
     liste_noeud *prev = NULL;
@@ -229,7 +229,7 @@ void remove(noeud *node){
 
     // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
     while(tmp != NULL){
-        if(tmp == node){    // On trouve ou est le noeud
+        if(tmp->no == node){    // On trouve ou est le noeud
             if(prev == NULL){   // Le noeud est au début
                 pere->fils = tmp->succ;
             }
