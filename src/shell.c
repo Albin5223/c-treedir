@@ -70,6 +70,10 @@ void touch(noeud *courant,char *nom){
 
 void rm(noeud *courant, char *chem){
     noeud *tmp = courant;
+    if(*(chem) == '/'){
+        tmp=retourRacine(courant);
+        chem = chem+1;
+    }
     while(nbSlash(chem)!=0){
         size_t l = longueur(chem);
         tmp = allerVers(tmp,recuperer(chem,l));
@@ -152,6 +156,27 @@ int main(){
     pwd(courant);
     courant =cd(courant,"Cours/ExempleCours");
     ls(courant);
+
+    puts("--------------------------TEST 8--------------");
+
+    rm(courant,"Exemple2");
+    ls(courant);
+
+    puts("--------------------------TEST 8--------------");
+
+    courant = cd(courant,"");
+    print(courant);
+    rm(courant,"Cours/Cours1");
+    puts("--------------------------TEST 8 Apres Suppresion--------------");
+    puts("--------------------------TEST 9---------------------");
+    courant =cd(courant,"Cours/ExempleCours");
+    ls(courant);
+    rm(courant,"/Cours");
+
+
+
+    print(courant);
+    
 
 
 

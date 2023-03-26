@@ -551,7 +551,7 @@ noeud *getFils(noeud *courant, char *nom){
  * @return un boolean 
 */
 bool estParent(noeud *courant,noeud *pere){
-    if (courant->pere=courant && courant != pere){
+    if (courant->racine==courant && courant != pere){
         return false;
     }
     if(courant == pere){
