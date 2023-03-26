@@ -496,6 +496,7 @@ noeud *initDossier(noeud *pere,char *nom){
  * @param nom Le nom du dossier dans lequel on veut y aller
  * @return Le noeud du dossier portant le nom nom
 */
+
 noeud *allerVers(noeud *courant,char *chem){
 
     liste_noeud *tmp = courant->fils;
@@ -512,7 +513,7 @@ noeud *allerVers(noeud *courant,char *chem){
 
 void afficheCheminVersRacine(noeud *courant){
     if(strcmp(courant->nom,courant->racine->nom)==0){
-        printf("%s",courant->nom);
+        printf("%s/",courant->nom);
     }
     else{
         afficheCheminVersRacine(courant->pere);

@@ -1,4 +1,5 @@
 #include "noeud.h"
+#include "chemin.h"
 #include<stdlib.h>
 #include<stdio.h>
 
@@ -23,11 +24,30 @@ noeud *cd(noeud *courant,char *chem){
             return retourPere(courant);
         }
         else{
-            
-            noeud *p=allerVers(courant,chem);
-            if(p==NULL){
-                puts("Dossier inexistant");
-                return courant;
+            noeud *p = courant;
+            if(*(chem) == '/'){
+                p=retourRacine(courant);
+                chem = chem+1;
+            }
+            size_t somme = 0;
+            size_t l = strlen(chem);
+            size_t nb = nbSlash(chem);
+    
+
+            while(somme != l-nb){
+                size_t res = longueur(chem);
+                char *sub = recuperer(chem,res);
+                
+                p=allerVers(p,sub);
+                if(p==NULL){
+                    puts("Dossier inexistant");
+                    return courant;
+                }
+
+                free(sub);
+
+                chem = chem+res+1;
+                somme +=res;
             }
             
             return p;
@@ -94,6 +114,11 @@ int main(){
 
     puts("--------------------------TEST 6--------------");
     print(courant);
+
+    puts("--------------------------TEST 7--------------");
+    pwd(courant);
+    courant =cd(courant,"Cours/ExempleCours");
+    ls(courant);
 
 
 
