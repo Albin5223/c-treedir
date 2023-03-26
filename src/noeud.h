@@ -521,4 +521,45 @@ void afficheCheminVersRacine(noeud *courant){
     }
 }
 
+/**
+ * Cette fonction renvoie le noeud fil du noeud courant pourtant le nom nom;
+ * @param courant Le dossier dans lequel on veut chercher le fils
+ * @param nom le nom du noeud qu'on cherche
+ * @return le dossier portant le nom, sinon NULL si il existe pas;
+*/
+
+noeud *getFils(noeud *courant, char *nom){
+    liste_noeud *fils = courant->fils;
+
+    while(fils != NULL){
+        if(strcmp(fils->no->nom,nom)==0){
+            return fils->no;
+        }
+        fils = fils->succ;
+    }
+
+    return NULL;
+}
+
+
+
+/**
+ * Cette fonction vérifier si le noeud pere est dans les parents de courant
+ * ATTENTION pere doit être un dossier et noeud aussi
+ * @param courant est le noeud courant
+ * @param pere est le noeud dont on veut vérifier qu'il est dans les pere de courant
+ * @return un boolean 
+*/
+bool estParent(noeud *courant,noeud *pere){
+    if (courant->pere=courant && courant != pere){
+        return false;
+    }
+    if(courant == pere){
+        return true;
+    }
+    else{
+        return estParent(courant->pere,pere);
+    }
+}
+
 

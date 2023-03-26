@@ -55,3 +55,4 @@ size_t nbSlash(char *s1){
     }
     return compt;
 }
+

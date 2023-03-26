@@ -68,6 +68,39 @@ void touch(noeud *courant,char *nom){
     initFichier(courant,nom);
 }
 
+void rm(noeud *courant, char *chem){
+    noeud *tmp = courant;
+    while(nbSlash(chem)!=0){
+        size_t l = longueur(chem);
+        tmp = allerVers(tmp,recuperer(chem,l));
+        if(tmp == NULL){
+            puts("chemin Inexistant");
+            return;
+        }
+
+        chem = chem+l+1;
+    }
+    noeud *cible = getFils(tmp,chem);
+    if(cible == NULL){
+        puts("Fichier ou dossier inexistant");
+        return;
+    }
+    if(cible->est_dossier){
+        if(estParent(courant,cible)){
+            puts("Le dossier cible est le pere du dossier courant. Opération impossible");
+            return;
+        }
+        else{
+            removeNode(cible);
+        }
+    }
+    else{
+        removeNode(cible);
+    }
+}
+
+
+
 
 
 
