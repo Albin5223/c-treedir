@@ -202,6 +202,8 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
 */
 void addToListLast(liste_noeud *list, noeud *node){
     assert(list != NULL || node != NULL);
+
+    printf("%s \n",node->nom);
     if(verifierNomDejaExistant(list->no->pere,node->nom)){
         puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
         return;
@@ -333,30 +335,16 @@ noeud *copyNode(noeud *node){
 
     noeud *copy = initNode(nom);
     copy->est_dossier = node->est_dossier;
-    if(node->fils != NULL){
-        copy->fils = copyList(node->fils);
+    
+    if(node->est_dossier){
+        liste_noeud *tmp = node->fils;
+        while(tmp!=NULL){
+            noeud *copieFils = copyNode(tmp->no);
+            addNodeToFilsOfNode(copy,copieFils);
+            tmp=tmp->succ;
+        }
     }
-    return copy;
-}
-
-/**
- * Cette fonction renvoie une copie d'une liste
- * @param list La liste à copier
- * @return Une copie de cette liste
-*/
-liste_noeud *copyList(liste_noeud *list){
-    liste_noeud *copy = initList(copyNode(list->no));
-
-    liste_noeud *tmp = list->succ;
-    while (tmp != NULL){
-        /**
-         * Pourquoi faire un addToListLast et non pas addToListAlpha ?
-         * La réponse est simple : la liste que nous voulons copier est normalement toujours trié dans la manière que nous voulons
-         * Donc autant simplement ajouter les éléments les un après les autres, puisque c'est déjà trié
-        */
-        addToListLast(copy,copyNode(tmp->no));
-        tmp = tmp->succ;
-    }
+    free(nom);
     return copy;
 }
 

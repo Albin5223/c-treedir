@@ -130,6 +130,28 @@ void mv(noeud *courant,char *chem1,char *chem2){
 }
 
 
+void cp(noeud *courant,char *chem1,char *chem2){
+    noeud *cible = recupererNodeWithPath(courant,chem1);
+    if(cible == NULL){
+        puts("Fichier ou dossier inexistant");
+        return;
+    }
+
+    noeud *arrive = recupererNodeWithPath(courant,chem2);
+    if(arrive == NULL){
+        puts("Dossier inexistant");
+        return;
+    }
+    if(!arrive->est_dossier){
+        puts("Le chemin d'arrive n'est pas un dossier");
+        return;
+    }
+    
+    noeud *copie = copyNode(cible);
+    addNodeToFilsOfNode(arrive,copie);
+}
+
+
 
 
 
@@ -206,7 +228,7 @@ int main(){
     courant =cd(courant,"");
     mkdir(courant,"Test");
     print(courant);
-    puts("--------------------------TEST 11---Apres mv----------------");
+    puts("--------------------------TEST 12---Apres mv----------------");
 
     mv(courant,"Cours/ExempleCours","Test");
     print(courant);
@@ -215,6 +237,30 @@ int main(){
 
     courant = cd(courant,"/Cours");
     ls(courant);
+
+    puts("--------------------------TEST 13-------------------");
+    courant = cd(courant,"..");
+    courant = cd(courant,"Test");
+    
+    mkdir(courant,"Prenom");
+    courant = cd(courant,"Prenom");
+    touch(courant,"Servan");
+    touch(courant,"Albin");
+    touch(courant,"Margaux");
+    touch(courant,"Perseverance");
+    mkdir(courant,"Ville");
+    courant = cd(courant,"Ville");
+    touch(courant,"Paris");
+    touch(courant,"Berlin");
+    touch(courant,"Rome");
+    courant = cd(courant,"/");
+    print(courant);
+    
+    puts("--------------------------TEST 14--Apres cp--------------");
+    cp(courant,"Test/Prenom","Cours");
+    print(courant);
+    
+
 
 
 
