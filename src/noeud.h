@@ -291,6 +291,10 @@ void moveNode(noeud *nomade, noeud *newPere){
         puts("Message d'erreur : Le noeud que vous voulez DEPLACER n'a pas de pere (situation anormale)");
         return;
     }
+    if(!newPere->est_dossier){
+        puts("Message d'erreur : Le noeud d'arrive n'est pas un dossier");
+        return;
+    }
 
     noeud *pere = nomade->pere;
 
