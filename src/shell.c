@@ -104,12 +104,6 @@ void rm(noeud *courant, char *chem){
 }
 
 
-
-
-
-
-
-
 int main(){
     noeud *courant = initRacine();
 
@@ -178,8 +172,110 @@ int main(){
     print(courant);
     
 
+    puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
+    puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- quit\n");
 
+    courant = cd(courant,"");
+
+    int MAX_L_COMMANDE = 8;
+    int MAX_L_ARGS = 100;
+    int MAX_L_BUFFER = MAX_L_ARGS + MAX_L_COMMANDE;
+
+    char *commande = malloc(sizeof(char)*(MAX_L_COMMANDE+1));
+    char *arg1 = malloc(sizeof(char)*(MAX_L_ARGS+1));
+    char *arg2 = malloc(sizeof(char)*(MAX_L_ARGS+1));
+    char *buffer = malloc(sizeof(char)*(MAX_L_BUFFER+1));
+
+    int nb_args = 0;
+
+    while (strcmp(commande,"quit") != 0 || nb_args != 1){    
+
+        nb_args = 0;
+        while (nb_args <= 0){
+            afficheCheminVersRacine(courant);printf("> ");
+            fgets(buffer,MAX_L_BUFFER,stdin);
+            int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
+            nb_args += (n>0) ? n : 0;
+            // Pour savoir le nombre d'arguments donnés :
+            //printf("%d\n",nb_args);
+        }
+
+        if(strcmp(commande,"ls") == 0){
+            if(nb_args == 1){
+                ls(courant);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+        
+        else if(strcmp(commande,"cd") == 0){
+            if(nb_args == 1){
+                courant = cd(courant,"");
+            }
+            else if(nb_args == 2){
+                courant = cd(courant,arg1);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+
+        else if(strcmp(commande,"pwd") == 0){
+            if(nb_args == 1){
+                pwd(courant);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+
+        else if(strcmp(commande,"mkdir") == 0){
+            if(nb_args == 1){
+                puts("Il manque un argument...");
+            }
+            else if(nb_args == 2){
+                mkdir(courant,arg1);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+
+        else if(strcmp(commande,"touch") == 0){
+            if(nb_args == 1){
+                puts("Il manque un argument...");
+            }
+            else if(nb_args == 2){
+                touch(courant,arg1);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+
+        else if(strcmp(commande,"rm") == 0){
+            if(nb_args == 1){
+                puts("Il manque un argument...");
+            }
+            else if(nb_args == 2){
+                rm(courant,arg1);
+            }
+            else{
+                puts("Trop d'arguments...");
+            }
+        }
+
+        else if(strcmp(commande,"quit") == 0){
+            if(nb_args != 1){puts("Trop d'arguments...");}
+        }
+
+        else{
+            puts("Commande introuvable...");
+        }
+
+    }
     
 
     return EXIT_SUCCESS;
