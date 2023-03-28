@@ -3,6 +3,9 @@
 #include<stdlib.h>
 #include<stdio.h>
 
+
+noeud *recupererNodeWithPath(noeud *courant,char *chem);
+
 noeud *initRacine(){
     noeud *p=initNode("");
     p->est_dossier = true;
@@ -68,7 +71,7 @@ void touch(noeud *courant,char *nom){
     initFichier(courant,nom);
 }
 
-void rm(noeud *courant, char *chem){
+noeud *recupererNodeWithPath(noeud *courant,char *chem){
     noeud *tmp = courant;
     if(*(chem) == '/'){
         tmp=retourRacine(courant);
@@ -76,15 +79,22 @@ void rm(noeud *courant, char *chem){
     }
     while(nbSlash(chem)!=0){
         size_t l = longueur(chem);
-        tmp = allerVers(tmp,recuperer(chem,l));
+        char *sub = recuperer(chem,l);
+        tmp = allerVers(tmp,sub);
         if(tmp == NULL){
             puts("chemin Inexistant");
-            return;
+            return NULL;
         }
-
+        free(sub);
         chem = chem+l+1;
     }
     noeud *cible = getFils(tmp,chem);
+
+    return cible;
+}
+
+void rm(noeud *courant, char *chem){
+    noeud *cible = recupererNodeWithPath(courant,chem);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
         return;
@@ -102,6 +112,50 @@ void rm(noeud *courant, char *chem){
         removeNode(cible);
     }
 }
+
+
+void mv(noeud *courant,char *chem1,char *chem2){
+    noeud *cible = recupererNodeWithPath(courant,chem1);
+    if(cible == NULL){
+        puts("Fichier ou dossier inexistant");
+        return;
+    }
+
+    noeud *arrive = recupererNodeWithPath(courant,chem2);
+    if(arrive == NULL){
+        puts("Dossier inexistant");
+        return;
+    }
+    moveNode(cible,arrive);
+}
+
+
+void cp(noeud *courant,char *chem1,char *chem2){
+    noeud *cible = recupererNodeWithPath(courant,chem1);
+    if(cible == NULL){
+        puts("Fichier ou dossier inexistant");
+        return;
+    }
+
+    noeud *arrive = recupererNodeWithPath(courant,chem2);
+    if(arrive == NULL){
+        puts("Dossier inexistant");
+        return;
+    }
+    if(!arrive->est_dossier){
+        puts("Le chemin d'arrive n'est pas un dossier");
+        return;
+    }
+    
+    noeud *copie = copyNode(cible);
+    addNodeToFilsOfNode(arrive,copie);
+}
+
+
+
+
+
+
 
 
 int main(){
@@ -156,19 +210,54 @@ int main(){
     rm(courant,"Exemple2");
     ls(courant);
 
-    puts("--------------------------TEST 8--------------");
+    puts("--------------------------TEST 9--------------");
 
     courant = cd(courant,"");
     print(courant);
     rm(courant,"Cours/Cours1");
-    puts("--------------------------TEST 8 Apres Suppresion--------------");
-    puts("--------------------------TEST 9---------------------");
+    puts("--------------------------TEST 9- Apres suppression-------------");
+    print(courant);
+
+    
+    puts("--------------------------TEST 10---------------------");
     courant =cd(courant,"Cours/ExempleCours");
     ls(courant);
-    rm(courant,"/Cours");
+    print(courant);
 
+    puts("--------------------------TEST 11---------------------");
+    courant =cd(courant,"");
+    mkdir(courant,"Test");
+    print(courant);
+    puts("--------------------------TEST 12---Apres mv----------------");
 
+    mv(courant,"Cours/ExempleCours","Test");
+    print(courant);
+    courant = cd (courant,"Test");
+    ls(courant);
 
+    courant = cd(courant,"/Cours");
+    ls(courant);
+
+    puts("--------------------------TEST 13-------------------");
+    courant = cd(courant,"..");
+    courant = cd(courant,"Test");
+    
+    mkdir(courant,"Prenom");
+    courant = cd(courant,"Prenom");
+    touch(courant,"Servan");
+    touch(courant,"Albin");
+    touch(courant,"Margaux");
+    touch(courant,"Perseverance");
+    mkdir(courant,"Ville");
+    courant = cd(courant,"Ville");
+    touch(courant,"Paris");
+    touch(courant,"Berlin");
+    touch(courant,"Rome");
+    courant = cd(courant,"/");
+    print(courant);
+    
+    puts("--------------------------TEST 14--Apres cp--------------");
+    cp(courant,"Test/Prenom","Cours");
     print(courant);
     
 
