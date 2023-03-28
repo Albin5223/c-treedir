@@ -107,8 +107,8 @@ unsigned int sizeOfFils(noeud *node){
 }
 
 /**
- * Cette fonction permet d'ajouter dans une liste un noeud, dans l'ordre alphabétique + trier par type (dossier/non-dossier)
- * PS : Les dossiers seront donc toujours avant les non-dossiers, et dans chacun des deux blocs, il y aura un tri alphabetique
+ * Cette fonction permet d'ajouter dans une liste un noeud, dans l'ordre alphabétique + trier par type (dossier/fichier)
+ * PS : Les dossiers seront donc toujours avant les fichiers, et dans chacun des deux blocs, il y aura un tri alphabetique
  * @param list La liste dans laquelle on veut ajouter le noeud
  * @param noeud Le noeud à ajouter
  * @return La nouvelle tete de la liste (au cas ou elle a été changée)
@@ -125,9 +125,9 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     liste_noeud *prev = NULL;
     liste_noeud *tmp = list;
 
-    if(!node->est_dossier){                 // CAS 1 : Si le noeud est un dossier, on veut l'ajouter dans la première partie avec les dossiers      
+    if(node->est_dossier){                 // CAS 1 : Si le noeud est un dossier, on veut l'ajouter dans la première partie avec les dossiers      
         while(tmp != NULL && tmp->no->est_dossier){
-            if(node->nom < tmp->no->nom){       // On trouve l'emplacement
+            if(strcmp(node->nom,tmp->no->nom) < 0){       // On trouve l'emplacement
                 if(prev == NULL){           // CAS 1.1 : Le dossier doit etre placé au tout début
                     newList->succ = list;
                     return newList;
@@ -143,10 +143,10 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
         }
         // CAS 1.3 : Le dossier doit être placé à la fin des dossiers
         if(prev == NULL){   // CAS 1.3.1 : Il n'y avait en faite pas de dossier
-            if(tmp == NULL){    // CAS 1.3.1.1 : Il n'y avait pas de non-dossier non plus
+            if(tmp == NULL){    // CAS 1.3.1.1 : Il n'y avait pas de fichier non plus
                 return newList;
             }
-            else{               // CAS 1.2.1.2 : Il y avait au moins 1 non-dossier
+            else{               // CAS 1.2.1.2 : Il y avait au moins 1 fichier
                 newList->succ = tmp;
                 return newList;
             }
@@ -156,13 +156,13 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
         newList->succ = tmp;
         return list;
     }
-    else{                               // CAS 2 : Si le noeud qu'on veut ajouter n'est pas un dossier, on veut donc l'ajouter dans la seconde partie avec les non-dossier
+    else{                               // CAS 2 : Si le noeud qu'on veut ajouter n'est pas un dossier, on veut donc l'ajouter dans la seconde partie avec les fichier
         while (tmp != NULL && tmp->no->est_dossier){    // On traverse tous les dossiers
             prev = tmp;
             tmp = tmp->succ;
         }
 
-        if(tmp == NULL){        // CAS 2.1 : Il n'y a pas de non-dossiers
+        if(tmp == NULL){        // CAS 2.1 : Il n'y a pas de fichiers
             if(prev == NULL){       // CAS 2.1.1 : Il n'y a pas de dossier non plus
                 return newList;
             }
@@ -171,14 +171,14 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
                 return list;
             }
         }
-        else{                   // CAS 2.2 : Il y a des non-dossiers
+        else{                   // CAS 2.2 : Il y a des fichiers
             while (tmp != NULL){
-                if(node->nom < tmp->no->nom){   // On trouve l'emplacement
+                if(strcmp(node->nom,tmp->no->nom) < 0){   // On trouve l'emplacement
                     if(prev == NULL){           // CAS 2.2.1 : Il n'y a pas de dossier derriere et le noeud doit être placé au début
                         newList->succ = list;
                         return newList;
                     }
-                    else{               // CAS 2.2.2 : Il y a des dossiers ou non-dossiers derriere
+                    else{               // CAS 2.2.2 : Il y a des dossiers ou fichiers derriere
                         prev->succ = newList;
                         newList->succ = tmp;
                         return list;
@@ -187,41 +187,11 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
                 prev = tmp;
                 tmp = tmp->succ;
             }
-            // CAS 2.3 : Le non-dossier doit être placé à la fin
+            // CAS 2.3 : Le fichier doit être placé à la fin
             prev->succ = newList;
             return list;
         }
     }
-}
-
-/**
- * Fonction qui ajoute en fin de liste un noeud
- * @warning Cette fonction est surtout utilisée dans la méthode de copie
- * @param list La liste dans laquelle on veut ajouter le noeud
- * @param noeud Le noeud à ajouter
-*/
-void addToListLast(liste_noeud *list, noeud *node){
-    assert(list != NULL || node != NULL);
-
-    printf("%s \n",node->nom);
-    if(verifierNomDejaExistant(list->no->pere,node->nom)){
-        puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
-        return;
-    }
-
-    liste_noeud *newList = initList(node);
-    liste_noeud *prev = NULL;
-    liste_noeud *tmp = list;
-
-    while (tmp != NULL){
-        prev = tmp;
-        tmp = tmp->succ;
-    }
-    if(prev == NULL){
-        puts("Message d'erreur : Il y avait une liste avec un attribut 'no' = NULL (situation anormale)");
-        return;
-    }
-    prev->succ = newList;
 }
 
 /**
@@ -230,6 +200,10 @@ void addToListLast(liste_noeud *list, noeud *node){
  * @param fils Le noeud qui devient le fils
 */
 void addNodeToFilsOfNode(noeud *pere, noeud *fils){
+    if(verifierNomDejaExistant(pere,fils->nom)){
+        puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
+        return;
+    }
     fils->pere = pere;
     fils->racine = pere->racine;
     if(pere->fils == NULL){

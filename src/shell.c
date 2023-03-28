@@ -263,7 +263,7 @@ int main(){
 
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
-    puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- quit\n");
+    puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
 
     courant = cd(courant,"");
 
@@ -295,7 +295,7 @@ int main(){
                 ls(courant);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
             }
         }
         
@@ -307,7 +307,7 @@ int main(){
                 courant = cd(courant,arg1);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
             }
         }
 
@@ -316,7 +316,7 @@ int main(){
                 pwd(courant);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
             }
         }
 
@@ -328,7 +328,7 @@ int main(){
                 mkdir(courant,arg1);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
             }
         }
 
@@ -340,7 +340,7 @@ int main(){
                 touch(courant,arg1);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
             }
         }
 
@@ -352,12 +352,39 @@ int main(){
                 rm(courant,arg1);
             }
             else{
-                puts("Trop d'arguments...");
+                puts("Nombre d'arguments incorrect...");
+            }
+        }
+
+        else if(strcmp(commande,"cp") == 0){
+            if(nb_args == 3){
+                cp(courant,arg1,arg2);
+            }
+            else{
+                puts("Nombre d'arguments incorrect...");
+            }
+        }
+
+        else if(strcmp(commande,"mv") == 0){
+            if(nb_args == 3){
+                cp(courant,arg1,arg2);
+            }
+            else{
+                puts("Nombre d'arguments incorrect...");
+            }
+        }
+
+        else if(strcmp(commande,"print") == 0){
+            if(nb_args == 1){
+                print(courant->racine);
+            }
+            else{
+                puts("Nombre d'arguments incorrect...");
             }
         }
 
         else if(strcmp(commande,"quit") == 0){
-            if(nb_args != 1){puts("Trop d'arguments...");}
+            if(nb_args != 1){puts("Nombre d'arguments incorrect...");}
         }
 
         else{
