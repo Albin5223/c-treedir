@@ -367,7 +367,7 @@ int main(){
 
         else if(strcmp(commande,"mv") == 0){
             if(nb_args == 3){
-                cp(courant,arg1,arg2);
+                mv(courant,arg1,arg2);
             }
             else{
                 puts("Nombre d'arguments incorrect...");
@@ -392,6 +392,12 @@ int main(){
         }
 
     }
+    //Free de tous les mallocs
+
+    free(commande);
+    free(arg1);
+    free(arg2);
+    free(buffer);
     
 
     return EXIT_SUCCESS;

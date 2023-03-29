@@ -23,9 +23,9 @@ size_t longueur(char *s1){
  * Cette fonction renvoie le mot de 0 a lon
  * @param s1 est le mot dont on veut le début
  * @param lon est la longueur du sous-mot
- * @return L'emplacement du sous mot !!! ATTENTION : Il faut free la valeur de retour
+ * @return L'emplacement du sous mot !!! 
+ * @warning Il faut free la valeur de retour
 */
-
 char *recuperer(char *s1,size_t lon){
     char *tab =malloc((lon+1)*sizeof(char));
 
