@@ -302,14 +302,9 @@ void moveNode(noeud *nomade, noeud *newPere){
  * @return Une copie de node
 */
 noeud *copyNode(noeud *node){
-    size_t fullLength = strlen(node->nom)+1;
-    char *nom = malloc(sizeof(char)*fullLength);
-    assert(nom != NULL);
-    strncpy(nom,node->nom,fullLength);
-
-    noeud *copy = initNode(nom);
+    noeud *copy = initNode(node->nom);
     copy->est_dossier = node->est_dossier;
-    
+    copy->racine = node->racine;
     if(node->est_dossier){
         liste_noeud *tmp = node->fils;
         while(tmp!=NULL){
@@ -318,7 +313,7 @@ noeud *copyNode(noeud *node){
             tmp=tmp->succ;
         }
     }
-    free(nom);
+    
     return copy;
 }
 
