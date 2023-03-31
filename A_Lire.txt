@@ -1,0 +1,22 @@
+Pour exécuter en utilisant le systeme avec les .h 
+
+tu dois faire  :: gcc -c *c
+
+Pour chacun de tes fichiers .c ca va te créer un fichier .o
+Apres tu fais 
+gcc -o prog *.o
+
+Donc la ca va te créer un fichier prog qui sera la compilation de tout le prog
+et pour l'executer tu as juste a faire
+
+./prog
+
+En tout cas ca fonctionne plutot bien en Linux
+
+
+Ca sert du coup pour enlever les definitions de fonction des .h
+
+Et du coup le prof de tp a dit que l'idéal, chaque fichier .h devrait
+avoir un fichier .c avec la définition de chaque fonction.
+
+le .h sert d'en tête pour le .c
