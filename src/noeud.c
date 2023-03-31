@@ -39,6 +39,8 @@ unsigned int size(liste_noeud *list){
  * @param list La liste dans laquelle on veut ajouter le noeud
  * @param noeud Le noeud à ajouter
  * @return La nouvelle tete de la liste (au cas ou elle a été changée)
+ * 
+ * @warning ! Ne jamais utiliser cette fonction directement parce que c'est une fonction auxiliaire ! Il faut passer par addNodeToFilsOfNode qui s'en sert correctement
 */
 liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
     assert(list != NULL || node != NULL);
@@ -160,6 +162,10 @@ unsigned int sizeOfFils(noeud *node){
 void addNodeToFilsOfNode(noeud *pere, noeud *fils){
     if(verifierNomDejaExistant(pere,fils->nom)){
         puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
+        return;
+    }
+    if(!pere->est_dossier){
+        puts("Message d'erreur : Vous essayez d'ajouter un noeud dans un autre noeud qui n'est PAS un dossier");
         return;
     }
     fils->pere = pere;
@@ -323,15 +329,29 @@ void afficheFils(noeud *p){
     }
 }
 
+/**
+ * Fonction qui permet simplement d'afficher le nom d'un noeud, suivi d'un retour à la ligne
+ * @param p Le noeud dont on veut récupérer le nom
+*/
 void afficheNom(noeud *p){
     printf("%s",p->nom);
     p->est_dossier ? printf("/\n") : printf("\n");
 }
 
+/**
+ * Fonction qui permet de retourner à la racine d'un noeud
+ * @param p Le noeud en question
+ * @return La racine de ce noeud
+*/
 noeud *retourRacine(noeud *p){
     return p->racine;
 }
 
+/**
+ * Fonction qui permet de retourner au pere d'un noeud
+ * @param p Le noeud en question
+ * @return Le pere de ce noeud
+*/
 noeud *retourPere(noeud *p){
     return p->pere;
 }
@@ -359,6 +379,9 @@ bool verifierNomDejaExistant(noeud *p, char *nom){
     return false;
 }
 
+/**
+ * Fonction qui permet d'initialiser un fichier dans un fossier
+*/
 noeud *initFichier(noeud *pere, char *nom){
     if(verifierNomDejaExistant(pere,nom)){
         puts("Nom de Fichier deja Existant");
@@ -429,7 +452,10 @@ noeud *allerVers(noeud *courant,char *chem){
     return NULL;
 }
 
-
+/**
+ * Fonction qui affiche tout le chemin depuis la racine jusqu'au noeud (utile pour "pwd")
+ * @param courant Le noeud en question
+*/
 void afficheCheminVersRacine(noeud *courant){
     if(strcmp(courant->nom,courant->racine->nom)==0){
         printf("%s/",courant->nom);
