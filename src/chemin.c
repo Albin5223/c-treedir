@@ -1,8 +1,6 @@
 #include "chemin.h"
 #include <stdlib.h>
 
-
-
 /**
  * Cette fonction renvoie le nombre de / dans s1
  * @param s1 est le mot dont on veut le début

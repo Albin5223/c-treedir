@@ -3,7 +3,6 @@
 #include<stdlib.h>
 #include<stdio.h>
 
-
 noeud *recupererNodeWithPath(noeud *courant,char *chem);
 
 noeud *initRacine(){
@@ -13,6 +12,7 @@ noeud *initRacine(){
     p->racine=p;
     return p;
 }
+
 
 void ls(noeud *courant){
     afficheFils(courant);
@@ -152,16 +152,7 @@ void cp(noeud *courant,char *chem1,char *chem2){
 }
 
 
-
-
-
-
-
-
-int main(){
-    noeud *courant = initRacine();
-
-
+void arboDefaut(noeud *courant){
     puts("--------------------------TEST 1--------------");
     mkdir(courant,"Cours");
     touch(courant,"Travail");
@@ -259,8 +250,10 @@ int main(){
     puts("--------------------------TEST 14--Apres cp--------------");
     cp(courant,"Test/Prenom","Cours");
     print(courant);
-    
+}
 
+
+void shellManuel(noeud *courant){
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
     puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
@@ -398,6 +391,27 @@ int main(){
     free(arg1);
     free(arg2);
     free(buffer);
+}
+
+void shellAuto(noeud *courant)
+
+int main(int argc, char const *argv[]){
+    noeud *courant = initRacine();
+
+
+    //arboDefaut(courant);
+
+    if(argc <= 1){
+        shellManuel(courant);
+    }
+    else if(argc == 2){
+        printf("Fichier pointe : %s \n",*(argv+1));
+    }
+    else{
+        puts("Trop d'arguments...");
+    }
+
+    
     
 
     return EXIT_SUCCESS;
