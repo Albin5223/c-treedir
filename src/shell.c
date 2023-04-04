@@ -393,26 +393,42 @@ void shellManuel(noeud *courant){
     free(buffer);
 }
 
-void shellAuto(noeud *courant)
+#define LINE_LENGTH 100
 
-int main(int argc, char const *argv[]){
+void shellAuto(noeud *courant, char *chemin){
+    
+    FILE *flux = fopen(chemin,"r");
+    if(flux == NULL){perror("Probleme ouverture de fichier...");}
+    else{
+        char *line = malloc(sizeof(char) * LINE_LENGTH);
+
+        while (fgets(line,LINE_LENGTH,flux) != NULL){
+            printf("%s",line);
+        }
+
+
+        if(fclose(flux) != 0){perror("Probleme fermeture de fichier...");}
+    }
+}
+
+int main(int argc, char *argv[]){
     noeud *courant = initRacine();
-
-
     //arboDefaut(courant);
 
-    if(argc <= 1){
+    // On revient bien à la racine au cas ou
+    courant = cd(courant,"");
+
+    if(argc <= 1){              // CAS 1 : Pas d'argument donc shell manuel
         shellManuel(courant);
     }
-    else if(argc == 2){
+    else if(argc == 2){         // CAS 2 : Un argument -> on tente le lancement du shell auto
         printf("Fichier pointe : %s \n",*(argv+1));
+        shellAuto(courant,*(argv+1));
     }
-    else{
+    else{                       // CAS 3 : Trop d'arguments
         puts("Trop d'arguments...");
     }
 
-    
-    
 
     return EXIT_SUCCESS;
 }

@@ -1,0 +1,7 @@
+mkdir Cours
+mkdir TD
+touch test
+ls
+cd Cours
+touch yes
+cd
