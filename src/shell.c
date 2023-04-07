@@ -193,7 +193,7 @@ void arboDefaut(noeud *courant){
 
     puts("--------------------------TEST 7--------------");
     pwd(courant);
-    courant =cd(courant,"Cours/ExempleCours");
+    courant = cd(courant,"Cours/ExempleCours");
     ls(courant);
 
     puts("--------------------------TEST 8--------------");
@@ -252,17 +252,147 @@ void arboDefaut(noeud *courant){
     print(courant);
 }
 
+bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, int nb_args){
+    if(strcmp(commande,"ls") == 0){
+            if(nb_args == 1){
+                ls(*courant);
+                return true;
+            }
+            else{
+                puts("Nombre d'arguments incorrect...");
+                return false;
+            }
+        }
+        
+    else if(strcmp(commande,"cd") == 0){
+        if(nb_args == 1){
+            *courant = cd(*courant,"");
+            return true;
+        }
+        else if(nb_args == 2){
+            *courant = cd(*courant,arg1);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"pwd") == 0){
+        if(nb_args == 1){
+            pwd(*courant);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"mkdir") == 0){
+        if(nb_args == 1){
+            puts("Il manque un argument...");
+            return false;
+        }
+        else if(nb_args == 2){
+            mkdir(*courant,arg1);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"touch") == 0){
+        if(nb_args == 1){
+            puts("Il manque un argument...");
+            return false;
+        }
+        else if(nb_args == 2){
+            touch(*courant,arg1);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"rm") == 0){
+        if(nb_args == 1){
+            puts("Il manque un argument...");
+            return false;
+        }
+        else if(nb_args == 2){
+            rm(*courant,arg1);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"cp") == 0){
+        if(nb_args == 3){
+            cp(*courant,arg1,arg2);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"mv") == 0){
+        if(nb_args == 3){
+            mv(*courant,arg1,arg2);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"print") == 0){
+        if(nb_args == 1){
+            print((*courant)->racine);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
+    else if(strcmp(commande,"quit") == 0){
+        if(nb_args != 1){
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    else{
+        puts("Commande introuvable...");
+        return false;
+    }
+}
+
 
 void shellManuel(noeud *courant){
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
     puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
 
-    courant = cd(courant,"");
-
     int MAX_L_COMMANDE = 8;
     int MAX_L_ARGS = 100;
-    int MAX_L_BUFFER = MAX_L_ARGS + MAX_L_COMMANDE;
+    int MAX_L_BUFFER = 2*MAX_L_ARGS + MAX_L_COMMANDE;
 
     char *commande = malloc(sizeof(char)*(MAX_L_COMMANDE+1));
     char *arg1 = malloc(sizeof(char)*(MAX_L_ARGS+1));
@@ -273,116 +403,19 @@ void shellManuel(noeud *courant){
 
     while (strcmp(commande,"quit") != 0 || nb_args != 1){    
 
+        *commande = '\0';
+        *arg1 = '\0';
+        *arg2 = '\0';
+
         nb_args = 0;
-        while (nb_args <= 0){
-            afficheCheminVersRacine(courant);printf("> ");
-            fgets(buffer,MAX_L_BUFFER,stdin);
-            int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
-            nb_args += (n>0) ? n : 0;
-            // Pour savoir le nombre d'arguments donnés :
-            //printf("%d\n",nb_args);
-        }
+        afficheCheminVersRacine(courant);printf("> ");
+        fgets(buffer,MAX_L_BUFFER,stdin);
+        int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
+        nb_args += (n>0) ? n : 0;
+        // Pour savoir le nombre d'arguments donnés :
+        //printf("%d\n",nb_args);
 
-        if(strcmp(commande,"ls") == 0){
-            if(nb_args == 1){
-                ls(courant);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-        
-        else if(strcmp(commande,"cd") == 0){
-            if(nb_args == 1){
-                courant = cd(courant,"");
-            }
-            else if(nb_args == 2){
-                courant = cd(courant,arg1);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"pwd") == 0){
-            if(nb_args == 1){
-                pwd(courant);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"mkdir") == 0){
-            if(nb_args == 1){
-                puts("Il manque un argument...");
-            }
-            else if(nb_args == 2){
-                mkdir(courant,arg1);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"touch") == 0){
-            if(nb_args == 1){
-                puts("Il manque un argument...");
-            }
-            else if(nb_args == 2){
-                touch(courant,arg1);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"rm") == 0){
-            if(nb_args == 1){
-                puts("Il manque un argument...");
-            }
-            else if(nb_args == 2){
-                rm(courant,arg1);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"cp") == 0){
-            if(nb_args == 3){
-                cp(courant,arg1,arg2);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"mv") == 0){
-            if(nb_args == 3){
-                mv(courant,arg1,arg2);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"print") == 0){
-            if(nb_args == 1){
-                print(courant->racine);
-            }
-            else{
-                puts("Nombre d'arguments incorrect...");
-            }
-        }
-
-        else if(strcmp(commande,"quit") == 0){
-            if(nb_args != 1){puts("Nombre d'arguments incorrect...");}
-        }
-
-        else{
-            puts("Commande introuvable...");
-        }
+        executeCommande(&courant,commande,arg1,arg2,nb_args);
 
     }
     //Free de tous les mallocs
