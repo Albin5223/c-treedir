@@ -42,13 +42,11 @@ noeud *cd(noeud *courant,char *chem){
                 char *sub = recuperer(chem,res);
                 
                 p=allerVers(p,sub);
+                free(sub);
                 if(p==NULL){
                     puts("Dossier inexistant");
-                    return courant;
+                    return NULL;
                 }
-
-                free(sub);
-
                 chem = chem+res+1;
                 somme +=res;
             }
@@ -63,12 +61,12 @@ void pwd(noeud *courant){
     puts("");
 }
 
-void mkdir(noeud *courant,char *nom){
-    initDossier(courant, nom);
+bool mkdir(noeud *courant,char *nom){
+    return initDossier(courant, nom) != NULL;
 }
 
-void touch(noeud *courant,char *nom){
-    initFichier(courant,nom);
+bool touch(noeud *courant,char *nom){
+    return initFichier(courant,nom) != NULL;
 }
 
 noeud *recupererNodeWithPath(noeud *courant,char *chem){
@@ -93,16 +91,16 @@ noeud *recupererNodeWithPath(noeud *courant,char *chem){
     return cible;
 }
 
-void rm(noeud *courant, char *chem){
+bool rm(noeud *courant, char *chem){
     noeud *cible = recupererNodeWithPath(courant,chem);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
-        return;
+        return false;
     }
     if(cible->est_dossier){
         if(estParent(courant,cible)){
             puts("Le dossier cible est le pere du dossier courant. Opération impossible");
-            return;
+            return false;
         }
         else{
             removeNode(cible);
@@ -111,44 +109,56 @@ void rm(noeud *courant, char *chem){
     else{
         removeNode(cible);
     }
+    return true;
 }
 
 
-void mv(noeud *courant,char *chem1,char *chem2){
+bool mv(noeud *courant,char *chem1,char *chem2){
     noeud *cible = recupererNodeWithPath(courant,chem1);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
-        return;
+        return false;
     }
 
     noeud *arrive = recupererNodeWithPath(courant,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
-        return;
+        return false;
     }
-    moveNode(cible,arrive);
+    if(estParent(arrive,cible)){
+        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
+        return false;
+    }
+    return moveNode(cible,arrive);
+
+
 }
 
 
-void cp(noeud *courant,char *chem1,char *chem2){
+bool cp(noeud *courant,char *chem1,char *chem2){
     noeud *cible = recupererNodeWithPath(courant,chem1);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
-        return;
+        return false;
     }
 
     noeud *arrive = recupererNodeWithPath(courant,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
-        return;
+        return false;
     }
     if(!arrive->est_dossier){
         puts("Le chemin d'arrive n'est pas un dossier");
-        return;
+        return false;
     }
     
     noeud *copie = copyNode(cible);
-    addNodeToFilsOfNode(arrive,copie);
+    if (addNodeToFilsOfNode(arrive,copie)){
+        return true;
+    }
+    removeNode(cible);
+
+    return false;
 }
 
 /**
@@ -246,11 +256,11 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
     else if(strcmp(commande,"cd") == 0){
         if(nb_args == 1){
             *courant = cd(*courant,"");
-            return true;
+            return *courant != NULL;
         }
         else if(nb_args == 2){
             *courant = cd(*courant,arg1);
-            return true;
+            return *courant != NULL;
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -275,8 +285,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            mkdir(*courant,arg1);
-            return true;
+            return mkdir(*courant,arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -290,8 +299,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            touch(*courant,arg1);
-            return true;
+            return touch(*courant,arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -305,8 +313,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            rm(*courant,arg1);
-            return true;
+            return rm(*courant,arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -316,8 +323,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"cp") == 0){
         if(nb_args == 3){
-            cp(*courant,arg1,arg2);
-            return true;
+            return cp(*courant,arg1,arg2);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -327,8 +333,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"mv") == 0){
         if(nb_args == 3){
-            mv(*courant,arg1,arg2);
-            return true;
+            return mv(*courant,arg1,arg2);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -460,7 +465,7 @@ void shellAuto(noeud **courant, char *chemin){
             nb_args += (n>0) ? n : 0;
 
             if(executeCommande(courant,commande,arg1,arg2,nb_args) == false){
-                printf("Il y a un soucis à la ligne %u : %s",n_line,buffer);
+                printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
                 break;
             }
 

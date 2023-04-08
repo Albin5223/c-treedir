@@ -22,10 +22,10 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node);
 
 noeud *initNode(char *c);
 unsigned int sizeOfFils(noeud *node);
-void addNodeToFilsOfNode(noeud *pere, noeud *fils);
+bool addNodeToFilsOfNode(noeud *pere, noeud *fils);
 void freeRecInNode(noeud *node);
 void removeNode(noeud *node);
-void moveNode(noeud *nomade, noeud *newPere);
+bool moveNode(noeud *nomade, noeud *newPere);
 noeud *copyNode(noeud *node);
 void print(noeud *node);
 void printNameWithType(noeud *node);

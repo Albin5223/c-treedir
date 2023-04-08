@@ -1,0 +1,35 @@
+mkdir Cours
+cd Cours
+mkdir TD
+cd TD
+touch TD1
+touch TD2
+touch TD3
+cd ..
+mkdir TP
+cd TP
+touch Malloc
+touch System
+touch Arbre
+cd ..
+mkdir Cours
+cd Cours
+touch cours1
+touch CM1
+touch CM2
+cd
+mkdir EA4
+cd EA4
+mkdir TD
+cd TD
+touch Outils
+touch Conducteur
+cd
+cp Cours/Cours EA4
+cd Cours/Cours
+touch Avis
+cd
+mv Cours/TP Cours/Cours
+cd
+mv Cours/TD EA4
+print

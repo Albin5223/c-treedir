@@ -159,14 +159,14 @@ unsigned int sizeOfFils(noeud *node){
  * @param pere Ce noeud est le pere qui se voit rajouter un fils
  * @param fils Le noeud qui devient le fils
 */
-void addNodeToFilsOfNode(noeud *pere, noeud *fils){
+bool addNodeToFilsOfNode(noeud *pere, noeud *fils){
     if(verifierNomDejaExistant(pere,fils->nom)){
         puts("Message d'erreur : Vous essayez d'ajouter un noeud avec un nom déjà existant dans une liste");
-        return;
+        return false;
     }
     if(!pere->est_dossier){
         puts("Message d'erreur : Vous essayez d'ajouter un noeud dans un autre noeud qui n'est PAS un dossier");
-        return;
+        return false;
     }
     fils->pere = pere;
     fils->racine = pere->racine;
@@ -176,6 +176,7 @@ void addNodeToFilsOfNode(noeud *pere, noeud *fils){
     else{
         pere->fils = addToListAlpha(pere->fils,fils);
     }
+    return true;
 }
 
 /**
@@ -226,14 +227,14 @@ void removeNode(noeud *node){
  * @param nomade Le noeud qui va se déplacer
  * @param newPere Le nouveau père du noeud nomade
 */
-void moveNode(noeud *nomade, noeud *newPere){
+bool moveNode(noeud *nomade, noeud *newPere){
     if(nomade->pere == NULL){
         puts("Message d'erreur : Le noeud que vous voulez DEPLACER n'a pas de pere (situation anormale)");
-        return;
+        return false;
     }
     if(!newPere->est_dossier){
         puts("Message d'erreur : Le noeud d'arrive n'est pas un dossier");
-        return;
+        return false;
     }
 
     noeud *pere = nomade->pere;
@@ -257,7 +258,13 @@ void moveNode(noeud *nomade, noeud *newPere){
     }
 
     // ETAPE 2 : Ajouter le nomade comme fils du nouveau pere
-    addNodeToFilsOfNode(newPere,nomade);
+    if(addNodeToFilsOfNode(newPere,nomade)){
+        return true;
+    }
+    else{
+        addNodeToFilsOfNode(pere,nomade);
+        return false;
+    }
 }
 
 /**
@@ -367,10 +374,7 @@ noeud *retourPere(noeud *p){
  * @return true si ce nom existe déjà, false sinon
 */
 bool verifierNomDejaExistant(noeud *p, char *nom){
-    int trouve = strcmp(nom,p->nom);
-    if(trouve == 0){
-        return true;
-    }
+    int trouve = 1;
     liste_noeud *tmp = p->fils;
     while (tmp!=NULL){
         char *s1 = tmp->no->nom;
@@ -396,9 +400,11 @@ noeud *initFichier(noeud *pere, char *nom){
     n->pere=pere;
     n->racine=pere->racine;
 
-    addNodeToFilsOfNode(pere,n);
-
-    return n;
+    if(addNodeToFilsOfNode(pere,n)){
+        return n;
+    }
+    removeNode(n);
+    return NULL;
 }
 
 
@@ -431,9 +437,12 @@ noeud *initDossier(noeud *pere,char *nom){
 
 
     //On ajoute ce noeud dans les fils du noeud courant
-    addNodeToFilsOfNode(pere,dossier);
+    if (addNodeToFilsOfNode(pere,dossier)){
+        return dossier;
+    }
 
-    return dossier;
+    removeNode(dossier);
+    return NULL;
 }
 
 /**
@@ -491,7 +500,7 @@ noeud *getFils(noeud *courant, char *nom){
 
 /**
  * Cette fonction vérifier si le noeud pere est dans les parents de courant
- * ATTENTION pere doit être un dossier et noeud aussi
+ * @warning pere doit être un dossier
  * @param courant est le noeud courant
  * @param pere est le noeud dont on veut vérifier qu'il est dans les pere de courant
  * @return un boolean 

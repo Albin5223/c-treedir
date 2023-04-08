@@ -2,7 +2,7 @@ mkdir Cours
 mkdir TD
 touch test
 ls
-cd Cours igigi
+cd Cours
 touch yes
 cd
 print
