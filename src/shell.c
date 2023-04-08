@@ -151,107 +151,86 @@ void cp(noeud *courant,char *chem1,char *chem2){
     addNodeToFilsOfNode(arrive,copie);
 }
 
-
-void arboDefaut(noeud *courant){
-    puts("--------------------------TEST 1--------------");
-    mkdir(courant,"Cours");
-    touch(courant,"Travail");
+/**
+ * Cette méthode contient une série d'instructions de test, qui modifie par la même occasion le noeud en argument
+ * @param courant L'adresse du noeud qui représentera la racine des tests
+ * @warning Il faut bel et bien donner l'adresse du noeud afin de pouvoir le modifier lors de l'appel à la fonction (exemple : arboDefaut(&racine))
+*/
+void arboDefaut(noeud **courant){
+    mkdir(*courant,"Cours");
+    touch(*courant,"Travail");
     
-    touch(courant,"test");
+    touch(*courant,"test");
 
-    mkdir(courant,"TD");
-    ls(courant);
-    puts("--------------------------TEST 2--------------");
-    courant = cd(courant,"Cours");
+    mkdir(*courant,"TD");
+
+    *courant = cd(*courant,"Cours");
     
-    touch(courant,"Cours1");
-    touch(courant,"cours2");
-
-    
-
-    mkdir(courant,"ExempleCours");
-    ls(courant);
-
-    puts("--------------------------TEST 3--------------");
-    courant = cd(courant,"Cours");
-
-
-    puts("--------------------------TEST 4--------------");
-    courant = cd(courant,"ExempleCours");
-    touch(courant,"Exemple1");
-    touch(courant,"Exemple2");
-    ls(courant);
-    pwd(courant);
-
-    puts("--------------------------TEST 5--------------");
-    courant=cd(courant,"");
-    ls(courant);
-
-
-    puts("--------------------------TEST 6--------------");
-    print(courant);
-
-    puts("--------------------------TEST 7--------------");
-    pwd(courant);
-    courant = cd(courant,"Cours/ExempleCours");
-    ls(courant);
-
-    puts("--------------------------TEST 8--------------");
-
-    rm(courant,"Exemple2");
-    ls(courant);
-
-    puts("--------------------------TEST 9--------------");
-
-    courant = cd(courant,"");
-    print(courant);
-    rm(courant,"Cours/Cours1");
-    puts("--------------------------TEST 9- Apres suppression-------------");
-    print(courant);
+    touch(*courant,"Cours1");
+    touch(*courant,"cours2");
 
     
-    puts("--------------------------TEST 10---------------------");
-    courant =cd(courant,"Cours/ExempleCours");
-    ls(courant);
-    print(courant);
 
-    puts("--------------------------TEST 11---------------------");
-    courant =cd(courant,"");
-    mkdir(courant,"Test");
-    print(courant);
-    puts("--------------------------TEST 12---Apres mv----------------");
+    mkdir(*courant,"ExempleCours");
 
-    mv(courant,"Cours/ExempleCours","Test");
-    print(courant);
-    courant = cd (courant,"Test");
-    ls(courant);
+    *courant = cd(*courant,"ExempleCours");
+    touch(*courant,"Exemple1");
+    touch(*courant,"Exemple2");
 
-    courant = cd(courant,"/Cours");
-    ls(courant);
+    *courant=cd(*courant,"");
 
-    puts("--------------------------TEST 13-------------------");
-    courant = cd(courant,"..");
-    courant = cd(courant,"Test");
+
+
+    *courant = cd(*courant,"Cours/ExempleCours");
+
+
+    rm(*courant,"Exemple2");
+
+
+    *courant = cd(*courant,"");
+    rm(*courant,"Cours/Cours1");
+
     
-    mkdir(courant,"Prenom");
-    courant = cd(courant,"Prenom");
-    touch(courant,"Servan");
-    touch(courant,"Albin");
-    touch(courant,"Margaux");
-    touch(courant,"Perseverance");
-    mkdir(courant,"Ville");
-    courant = cd(courant,"Ville");
-    touch(courant,"Paris");
-    touch(courant,"Berlin");
-    touch(courant,"Rome");
-    courant = cd(courant,"/");
-    print(courant);
+    *courant =cd(*courant,"Cours/ExempleCours");
+
+    *courant =cd(*courant,"");
+    mkdir(*courant,"Test");
+
+    mv(*courant,"Cours/ExempleCours","Test");
+    *courant = cd (*courant,"Test");
+
+    *courant = cd(*courant,"/Cours");
+
     
-    puts("--------------------------TEST 14--Apres cp--------------");
-    cp(courant,"Test/Prenom","Cours");
-    print(courant);
+    *courant = cd(*courant,"..");
+    *courant = cd(*courant,"Test");
+    
+    mkdir(*courant,"Prenom");
+    *courant = cd(*courant,"Prenom");
+    touch(*courant,"Servan");
+    touch(*courant,"Albin");
+    touch(*courant,"Margaux");
+    touch(*courant,"Perseverance");
+    mkdir(*courant,"Ville");
+    *courant = cd(*courant,"Ville");
+    touch(*courant,"Paris");
+    touch(*courant,"Berlin");
+    touch(*courant,"Rome");
+    *courant = cd(*courant,"/");
+    
+    cp(*courant,"Test/Prenom","Cours");
+
+    *courant =cd(*courant,"");
 }
 
+/**
+ * Méthode qui permet d'executer une ligne de commande directement sur le noeud courant en argument
+ * @param courant L'adresse du noeud en question
+ * @param commande Le contenu de la commande (exemple : ls, cd, pd, etc...)
+ * @param arg1 Le contenu du premier argument
+ * @param arg2 Le contenu du deuxieme argument
+ * @param nb_args Le nombre d'arguments, en comptant la commande egalement, exemple : "mv chem1 chem2" comptera comme 3 arguments
+*/
 bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, int nb_args){
     if(strcmp(commande,"ls") == 0){
             if(nb_args == 1){
@@ -371,24 +350,46 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
     else if(strcmp(commande,"quit") == 0){
         if(nb_args != 1){
             puts("Nombre d'arguments incorrect...");
-            return false;
         }
-        else{
-            return true;
-        }
+        return false;
     }
-
     else{
         puts("Commande introuvable...");
         return false;
     }
 }
 
-
-void shellManuel(noeud *courant){
+/**
+ * Méthode qui permet de lancer un shell ou l'utilisateur rentre ses commandes à la main
+ * @param courant L'adresse du noeud représentant la racine
+*/
+void shellManuel(noeud **courant){
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
     puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
+
+    // Bout de code permettant de donner le choix à l'utilisateur s'il veut une arborescence par défaut ou non
+    /*
+    char *reponse = malloc(sizeof(char)*4);
+    *reponse = '\0';
+
+    printf("Voulez-vous une arborescence de test ? (oui/non) : ");
+    while (true){
+        fgets(reponse,4,stdin);
+        if(strcmp(reponse,"oui") == 0){
+            arboDefaut(courant);
+            break;
+        }
+        else if(strcmp(reponse,"non") == 0){
+            break;
+        }
+        else{
+            printf("\nRepondez par 'oui' ou 'non' : ");
+        }
+    }
+    free(reponse);
+
+    */
 
     int MAX_L_COMMANDE = 8;
     int MAX_L_ARGS = 100;
@@ -408,17 +409,15 @@ void shellManuel(noeud *courant){
         *arg2 = '\0';
 
         nb_args = 0;
-        afficheCheminVersRacine(courant);printf("> ");
+        afficheCheminVersRacine(*courant);printf("> ");
         fgets(buffer,MAX_L_BUFFER,stdin);
         int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
         nb_args += (n>0) ? n : 0;
         // Pour savoir le nombre d'arguments donnés :
         //printf("%d\n",nb_args);
-
-        executeCommande(&courant,commande,arg1,arg2,nb_args);
-
+        executeCommande(courant,commande,arg1,arg2,nb_args);
     }
-    //Free de tous les mallocs
+    // Free de tous les mallocs
 
     free(commande);
     free(arg1);
@@ -426,7 +425,12 @@ void shellManuel(noeud *courant){
     free(buffer);
 }
 
-void shellAuto(noeud *courant, char *chemin){
+/**
+ * Méthode qui permet de lancer un shell, ou les commandes sont executés à partir d'un fichier
+ * @param courant L'adresse du noeud représentant la racine
+ * @param chemin Le chemin du fichier contenant les commandes
+*/
+void shellAuto(noeud **courant, char *chemin){
     
     FILE *flux = fopen(chemin,"r");
     if(flux == NULL){perror("Probleme ouverture de fichier...");}
@@ -455,7 +459,7 @@ void shellAuto(noeud *courant, char *chemin){
             int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
             nb_args += (n>0) ? n : 0;
 
-            if(executeCommande(&courant,commande,arg1,arg2,nb_args) == false){
+            if(executeCommande(courant,commande,arg1,arg2,nb_args) == false){
                 printf("Il y a un soucis à la ligne %u : %s",n_line,buffer);
                 break;
             }
@@ -474,22 +478,19 @@ void shellAuto(noeud *courant, char *chemin){
 
 int main(int argc, char *argv[]){
     noeud *courant = initRacine();
-    //arboDefaut(courant);
-
-    // On revient bien à la racine au cas ou
-    courant = cd(courant,"");
 
     if(argc <= 1){              // CAS 1 : Pas d'argument donc shell manuel
-        shellManuel(courant);
+        shellManuel(&courant);
     }
     else if(argc == 2){         // CAS 2 : Un argument -> on tente le lancement du shell auto
         printf("Fichier pointe : %s \n",*(argv+1));
-        shellAuto(courant,*(argv+1));
+        shellAuto(&courant,*(argv+1));
     }
     else{                       // CAS 3 : Trop d'arguments
         puts("Trop d'arguments...");
     }
 
+    free(courant);
 
     return EXIT_SUCCESS;
 }
