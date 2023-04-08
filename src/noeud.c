@@ -288,10 +288,14 @@ noeud *copyNode(noeud *node){
 void print(noeud *node){
     printf("Noeud ");printNameWithType(node);printf(", ");
 
-    printf("pere : %s, ",node->pere->nom);
+    if(node->pere != node){
+        printf("pere : %s, ",strcmp(node->pere->nom,"")==0 ? "/" : node->pere->nom);
+    }
 
-    unsigned int tfils = sizeOfFils(node);
-    printf("%u fils : ",tfils);
+    if(node->est_dossier){
+        unsigned int tfils = sizeOfFils(node);
+        printf("%u fils : ",tfils);
+    }
 
     liste_noeud *tmp = node->fils;
     while (tmp != NULL){
@@ -312,7 +316,7 @@ void print(noeud *node){
  * @param node Le noeud en question
 */
 void printNameWithType(noeud *node){
-    printf("%s ",node->nom);
+    strcmp(node->nom,"") == 0 ? printf("/ ") : printf("%s ",node->nom);
     node->est_dossier ? printf("(D)") : printf("(F)");
 }
 

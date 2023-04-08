@@ -426,19 +426,47 @@ void shellManuel(noeud *courant){
     free(buffer);
 }
 
-#define LINE_LENGTH 100
-
 void shellAuto(noeud *courant, char *chemin){
     
     FILE *flux = fopen(chemin,"r");
     if(flux == NULL){perror("Probleme ouverture de fichier...");}
     else{
-        char *line = malloc(sizeof(char) * LINE_LENGTH);
 
-        while (fgets(line,LINE_LENGTH,flux) != NULL){
-            printf("%s",line);
+        int MAX_L_COMMANDE = 8;
+        int MAX_L_ARGS = 100;
+        int MAX_L_BUFFER = 2*MAX_L_ARGS + MAX_L_COMMANDE;
+
+        char *commande = malloc(sizeof(char)*(MAX_L_COMMANDE+1));
+        char *arg1 = malloc(sizeof(char)*(MAX_L_ARGS+1));
+        char *arg2 = malloc(sizeof(char)*(MAX_L_ARGS+1));
+        char *buffer = malloc(sizeof(char)*(MAX_L_BUFFER+1));
+
+        int nb_args = 0;
+        int n_line = 1;
+
+        while (fgets(buffer,MAX_L_BUFFER,flux) != NULL){
+
+            *commande = '\0';
+            *arg1 = '\0';
+            *arg2 = '\0';
+
+            nb_args = 0;
+
+            int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
+            nb_args += (n>0) ? n : 0;
+
+            if(executeCommande(&courant,commande,arg1,arg2,nb_args) == false){
+                printf("Il y a un soucis à la ligne %u : %s",n_line,buffer);
+                break;
+            }
+
+            n_line++;
         }
 
+        free(commande);
+        free(arg1);
+        free(arg2);
+        free(buffer);
 
         if(fclose(flux) != 0){perror("Probleme fermeture de fichier...");}
     }
