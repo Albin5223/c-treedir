@@ -73,6 +73,9 @@ noeud *recupererNodeWithPath(noeud *courant,char *chem){
     noeud *tmp = courant;
     if(*(chem) == '/'){
         tmp=retourRacine(courant);
+        if(strlen(chem)==1){
+            return retourRacine(courant);
+        }
         chem = chem+1;
     }
     while(nbSlash(chem)!=0){
