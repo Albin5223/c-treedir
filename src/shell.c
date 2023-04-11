@@ -3,6 +3,8 @@
 #include<stdlib.h>
 #include<stdio.h>
 
+noeud *courant;
+
 noeud *recupererNodeWithPath(noeud *courant,char *chem);
 
 noeud *initRacine(){
@@ -14,11 +16,11 @@ noeud *initRacine(){
 }
 
 
-void ls(noeud *courant){
+void ls(){
     afficheFils(courant);
 }
 
-noeud *cd(noeud *courant,char *chem){
+noeud *cd(char *chem){
     if(strcmp(chem,"")==0){
         return retourRacine(courant);
     }
@@ -56,16 +58,16 @@ noeud *cd(noeud *courant,char *chem){
     }
 }
 
-void pwd(noeud *courant){
+void pwd(){
     afficheCheminVersRacine(courant);
     puts("");
 }
 
-bool mkdir(noeud *courant,char *nom){
+bool mkdir(char *nom){
     return initDossier(courant, nom) != NULL;
 }
 
-bool touch(noeud *courant,char *nom){
+bool touch(char *nom){
     return initFichier(courant,nom) != NULL;
 }
 
@@ -94,7 +96,7 @@ noeud *recupererNodeWithPath(noeud *courant,char *chem){
     return cible;
 }
 
-bool rm(noeud *courant, char *chem){
+bool rm(char *chem){
     noeud *cible = recupererNodeWithPath(courant,chem);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
@@ -116,7 +118,7 @@ bool rm(noeud *courant, char *chem){
 }
 
 
-bool mv(noeud *courant,char *chem1,char *chem2){
+bool mv(char *chem1,char *chem2){
     noeud *cible = recupererNodeWithPath(courant,chem1);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
@@ -138,7 +140,7 @@ bool mv(noeud *courant,char *chem1,char *chem2){
 }
 
 
-bool cp(noeud *courant,char *chem1,char *chem2){
+bool cp(char *chem1,char *chem2){
     noeud *cible = recupererNodeWithPath(courant,chem1);
     if(cible == NULL){
         puts("Fichier ou dossier inexistant");
@@ -169,71 +171,72 @@ bool cp(noeud *courant,char *chem1,char *chem2){
  * @param courant L'adresse du noeud qui représentera la racine des tests
  * @warning Il faut bel et bien donner l'adresse du noeud afin de pouvoir le modifier lors de l'appel à la fonction (exemple : arboDefaut(&racine))
 */
-void arboDefaut(noeud **courant){
-    mkdir(*courant,"Cours");
-    touch(*courant,"Travail");
+void arboDefaut(){
+    mkdir("Cours");
+
+    touch("Travail");
     
-    touch(*courant,"test");
+    touch("test");
 
-    mkdir(*courant,"TD");
+    mkdir("TD");
 
-    *courant = cd(*courant,"Cours");
+    courant = cd("Cours");
     
-    touch(*courant,"Cours1");
-    touch(*courant,"cours2");
-
-    
-
-    mkdir(*courant,"ExempleCours");
-
-    *courant = cd(*courant,"ExempleCours");
-    touch(*courant,"Exemple1");
-    touch(*courant,"Exemple2");
-
-    *courant=cd(*courant,"");
-
-
-
-    *courant = cd(*courant,"Cours/ExempleCours");
-
-
-    rm(*courant,"Exemple2");
-
-
-    *courant = cd(*courant,"");
-    rm(*courant,"Cours/Cours1");
+    touch("Cours1");
+    touch("cours2");
 
     
-    *courant =cd(*courant,"Cours/ExempleCours");
 
-    *courant =cd(*courant,"");
-    mkdir(*courant,"Test");
+    mkdir("ExempleCours");
 
-    mv(*courant,"Cours/ExempleCours","Test");
-    *courant = cd (*courant,"Test");
+    courant = cd("ExempleCours");
+    touch("Exemple1");
+    touch("Exemple2");
 
-    *courant = cd(*courant,"/Cours");
+    courant=cd("");
+
+
+
+    courant = cd("Cours/ExempleCours");
+
+
+    rm("Exemple2");
+
+
+    courant = cd("");
+    rm("Cours/Cours1");
 
     
-    *courant = cd(*courant,"..");
-    *courant = cd(*courant,"Test");
-    
-    mkdir(*courant,"Prenom");
-    *courant = cd(*courant,"Prenom");
-    touch(*courant,"Servan");
-    touch(*courant,"Albin");
-    touch(*courant,"Margaux");
-    touch(*courant,"Perseverance");
-    mkdir(*courant,"Ville");
-    *courant = cd(*courant,"Ville");
-    touch(*courant,"Paris");
-    touch(*courant,"Berlin");
-    touch(*courant,"Rome");
-    *courant = cd(*courant,"/");
-    
-    cp(*courant,"Test/Prenom","Cours");
+    courant =cd("Cours/ExempleCours");
 
-    *courant =cd(*courant,"");
+    courant =cd("");
+    mkdir("Test");
+
+    mv("Cours/ExempleCours","Test");
+    courant = cd ("Test");
+
+    courant = cd("/Cours");
+
+    
+    courant = cd("..");
+    courant = cd("Test");
+    
+    mkdir("Prenom");
+    courant = cd("Prenom");
+    touch("Servan");
+    touch("Albin");
+    touch("Margaux");
+    touch("Perseverance");
+    mkdir("Ville");
+    courant = cd("Ville");
+    touch("Paris");
+    touch("Berlin");
+    touch("Rome");
+    courant = cd("/");
+    
+    cp("Test/Prenom","Cours");
+
+    courant =cd("");
 }
 
 /**
@@ -244,7 +247,7 @@ void arboDefaut(noeud **courant){
  * @param arg2 Le contenu du deuxieme argument
  * @param nb_args Le nombre d'arguments, en comptant la commande egalement, exemple : "mv chem1 chem2" comptera comme 3 arguments
 */
-bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, int nb_args){
+bool executeCommande(char *commande, char *arg1, char *arg2, int nb_args){
     if(strcmp(commande,"ls") == 0){
             if(nb_args == 1){
                 ls(*courant);
@@ -258,12 +261,12 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
         
     else if(strcmp(commande,"cd") == 0){
         if(nb_args == 1){
-            *courant = cd(*courant,"");
-            return *courant != NULL;
+            courant = cd("");
+            return courant != NULL;
         }
         else if(nb_args == 2){
-            *courant = cd(*courant,arg1);
-            return *courant != NULL;
+            courant = cd(arg1);
+            return courant != NULL;
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -273,7 +276,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"pwd") == 0){
         if(nb_args == 1){
-            pwd(*courant);
+            pwd();
             return true;
         }
         else{
@@ -288,7 +291,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            return mkdir(*courant,arg1);
+            return mkdir(arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -302,7 +305,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            return touch(*courant,arg1);
+            return touch(arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -316,7 +319,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
             return false;
         }
         else if(nb_args == 2){
-            return rm(*courant,arg1);
+            return rm(arg1);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -326,7 +329,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"cp") == 0){
         if(nb_args == 3){
-            return cp(*courant,arg1,arg2);
+            return cp(arg1,arg2);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -336,7 +339,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"mv") == 0){
         if(nb_args == 3){
-            return mv(*courant,arg1,arg2);
+            return mv(arg1,arg2);
         }
         else{
             puts("Nombre d'arguments incorrect...");
@@ -346,7 +349,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
 
     else if(strcmp(commande,"print") == 0){
         if(nb_args == 1){
-            print((*courant)->racine);
+            print(courant->racine);
             return true;
         }
         else{
@@ -371,7 +374,7 @@ bool executeCommande(noeud **courant, char *commande, char *arg1, char *arg2, in
  * Méthode qui permet de lancer un shell ou l'utilisateur rentre ses commandes à la main
  * @param courant L'adresse du noeud représentant la racine
 */
-void shellManuel(noeud **courant){
+void shellManuel(){
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
     puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
@@ -417,13 +420,13 @@ void shellManuel(noeud **courant){
         *arg2 = '\0';
 
         nb_args = 0;
-        afficheCheminVersRacine(*courant);printf("> ");
+        afficheCheminVersRacine(courant);printf("> ");
         fgets(buffer,MAX_L_BUFFER,stdin);
         int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
         nb_args += (n>0) ? n : 0;
         // Pour savoir le nombre d'arguments donnés :
         //printf("%d\n",nb_args);
-        executeCommande(courant,commande,arg1,arg2,nb_args);
+        executeCommande(commande,arg1,arg2,nb_args);
     }
     // Free de tous les mallocs
 
@@ -438,7 +441,7 @@ void shellManuel(noeud **courant){
  * @param courant L'adresse du noeud représentant la racine
  * @param chemin Le chemin du fichier contenant les commandes
 */
-void shellAuto(noeud **courant, char *chemin){
+void shellAuto(char *chemin){
     
     FILE *flux = fopen(chemin,"r");
     if(flux == NULL){perror("Probleme ouverture de fichier...");}
@@ -467,7 +470,7 @@ void shellAuto(noeud **courant, char *chemin){
             int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
             nb_args += (n>0) ? n : 0;
 
-            if(executeCommande(courant,commande,arg1,arg2,nb_args) == false){
+            if(executeCommande(commande,arg1,arg2,nb_args) == false){
                 printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
                 break;
             }
@@ -485,14 +488,14 @@ void shellAuto(noeud **courant, char *chemin){
 }
 
 int main(int argc, char *argv[]){
-    noeud *courant = initRacine();
+    courant = initRacine();
 
     if(argc <= 1){              // CAS 1 : Pas d'argument donc shell manuel
-        shellManuel(&courant);
+        shellManuel();
     }
     else if(argc == 2){         // CAS 2 : Un argument -> on tente le lancement du shell auto
         printf("Fichier pointe : %s \n",*(argv+1));
-        shellAuto(&courant,*(argv+1));
+        shellAuto(*(argv+1));
     }
     else{                       // CAS 3 : Trop d'arguments
         puts("Trop d'arguments...");
