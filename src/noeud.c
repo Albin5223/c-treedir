@@ -33,6 +33,16 @@ unsigned int size(liste_noeud *list){
     return size;
 }
 
+void renameNode(noeud *courant, char *nouveau){
+    int i = 0;
+    while(i<strlen(nouveau)){
+        *(courant->nom+i) = *(nouveau+i);
+        i++;
+    }
+    *(courant->nom+i) = '\0';
+
+}
+
 /**
  * Cette fonction permet d'ajouter dans une liste un noeud, dans l'ordre alphabétique + trier par type (dossier/fichier)
  * PS : Les dossiers seront donc toujours avant les fichiers, et dans chacun des deux blocs, il y aura un tri alphabetique

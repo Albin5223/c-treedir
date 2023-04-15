@@ -75,9 +75,6 @@ noeud *recupererNodeWithPath(noeud *courant,char *chem){
     noeud *tmp = courant;
     if(*(chem) == '/'){
         tmp=retourRacine(courant);
-        if(strlen(chem)==1){
-            return retourRacine(courant);
-        }
         chem = chem+1;
     }
     while(nbSlash(chem)!=0){
@@ -125,7 +122,26 @@ bool mv(char *chem1,char *chem2){
         return false;
     }
 
-    noeud *arrive = recupererNodeWithPath(courant,chem2);
+    
+    noeud *arrive = courant;
+    if(*(chem2) == '/'){
+        arrive=retourRacine(courant);
+        chem2 = chem2+1;
+    }
+    while(nbSlash(chem2)!=0){
+        size_t l = longueur(chem2);
+        char *sub = recuperer(chem2,l);
+        arrive = allerVers(arrive,sub);
+        if(arrive == NULL){
+            puts("chemin d'arrive inexistant");
+            free(sub);
+            return false;
+        }
+        free(sub);
+        chem2 = chem2+l+1;
+    }
+
+    renameNode(cible,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;
@@ -147,7 +163,24 @@ bool cp(char *chem1,char *chem2){
         return false;
     }
 
-    noeud *arrive = recupererNodeWithPath(courant,chem2);
+    noeud *arrive = courant;
+    if(*(chem2) == '/'){
+        arrive=retourRacine(courant);
+        chem2 = chem2+1;
+    }
+    while(nbSlash(chem2)!=0){
+        size_t l = longueur(chem2);
+        char *sub = recuperer(chem2,l);
+        arrive = allerVers(arrive,sub);
+        if(arrive == NULL){
+            puts("chemin d'arrive inexistant");
+            free(sub);
+            return false;
+        }
+        free(sub);
+        chem2 = chem2+l+1;
+    }
+
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;
@@ -158,6 +191,7 @@ bool cp(char *chem1,char *chem2){
     }
     
     noeud *copie = copyNode(cible);
+    renameNode(copie,chem2);
     if (addNodeToFilsOfNode(arrive,copie)){
         return true;
     }
@@ -265,8 +299,12 @@ bool executeCommande(char *commande, char *arg1, char *arg2, int nb_args){
             return courant != NULL;
         }
         else if(nb_args == 2){
-            courant = cd(arg1);
-            return courant != NULL;
+            noeud *tmp = cd(arg1);
+            if(tmp!=NULL){
+                courant = tmp;
+                return true;
+            }
+            return false;
         }
         else{
             puts("Nombre d'arguments incorrect...");
