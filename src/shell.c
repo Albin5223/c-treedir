@@ -140,7 +140,10 @@ bool mv(char *chem1,char *chem2){
         free(sub);
         chem2 = chem2+l+1;
     }
-
+    if(verifierNomDejaExistant(arrive,chem2)){
+        puts("Nom deja existant dans ce dossier");
+        return false;
+    }
     renameNode(cible,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
@@ -189,8 +192,13 @@ bool cp(char *chem1,char *chem2){
         puts("Le chemin d'arrive n'est pas un dossier");
         return false;
     }
+    if(verifierNomDejaExistant(arrive,chem2)){
+        puts("Nom deja existant dans ce dossier");
+        return false;
+    }
     
     noeud *copie = copyNode(cible);
+    
     renameNode(copie,chem2);
     if (addNodeToFilsOfNode(arrive,copie)){
         return true;
