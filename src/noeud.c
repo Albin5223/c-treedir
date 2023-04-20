@@ -526,3 +526,59 @@ bool estParent(noeud *courant,noeud *pere){
         return estParent(courant->pere,pere);
     }
 }
+
+/**
+ * Méthode auxiliaire privée, pour afficher l'arborescence
+ * @param node L'arborescence à afficher
+ * @param profondeur La profondeur actuelle du noeud
+ * @param endOfList Bool qui permet de savoir si on est dans une fin de liste ou pas (utile pour un bon printage)
+*/
+void tree_rec(noeud *node, unsigned int profondeur, bool endOfList){
+    
+    // │   └   ├   ─
+
+    puts("");
+
+    for (size_t i = 0; i < profondeur; i++){
+        printf("│");
+    }
+
+    if(node->est_dossier){
+        printf("├─ %s",node->nom);
+    }
+    else{
+        if(endOfList){
+            printf("└─ %s",node->nom);
+        }
+        else{
+            printf("├─ %s",node->nom);
+        }
+    }
+
+    liste_noeud *tmp = node->fils;
+    while (tmp != NULL){
+        if(tmp->succ != NULL){
+            tree_rec(tmp->no,profondeur+1,false);   
+        }
+        else{
+            tree_rec(tmp->no,profondeur+1,true);
+        }
+        tmp = tmp->succ;
+    }
+    
+}
+
+/**
+ * Méthode pour afficher l'arborescence
+ * @param node L'arborescence à afficher
+*/
+void tree(noeud *node){
+    if(strcmp(node->nom,"") == 0){
+        printf("/");
+    }
+    else{
+        printf("%s",node->nom);
+    }
+    tree_rec(node,0,true);
+    puts("");
+}

@@ -42,3 +42,4 @@ void afficheCheminVersRacine(noeud *courant);
 noeud *getFils(noeud *courant, char *nom);
 bool estParent(noeud *courant, noeud *pere);
 void renameNode(noeud *courant, char* nouveau);
+void tree(noeud *node);

@@ -404,6 +404,17 @@ bool executeCommande(char *commande, char *arg1, char *arg2, int nb_args){
         }
     }
 
+    else if(strcmp(commande,"tree") == 0){
+        if(nb_args == 1){
+            tree(courant);
+            return true;
+        }
+        else{
+            puts("Nombre d'arguments incorrect...");
+            return false;
+        }
+    }
+
     else if(strcmp(commande,"quit") == 0){
         if(nb_args != 1){
             puts("Nombre d'arguments incorrect...");
@@ -423,7 +434,7 @@ bool executeCommande(char *commande, char *arg1, char *arg2, int nb_args){
 void shellManuel(){
     puts("--------------------------TEST DES COMMANDES DU SHELL A LA MAIN---------------------");
 
-    puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- quit\n");
+    puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- tree\n- quit\n");
 
     // Bout de code permettant de donner le choix à l'utilisateur s'il veut une arborescence par défaut ou non
     /*
