@@ -144,15 +144,17 @@ bool mv(char *chem1,char *chem2){
         puts("Nom deja existant dans ce dossier");
         return false;
     }
+
+    if(estParent(arrive,cible)){
+        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
+        return false;
+    }
     renameNode(cible,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;
     }
-    if(estParent(arrive,cible)){
-        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
-        return false;
-    }
+    
     return moveNode(cible,arrive);
 
 
