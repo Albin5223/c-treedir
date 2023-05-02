@@ -144,15 +144,17 @@ bool mv(char *chem1,char *chem2){
         puts("Nom deja existant dans ce dossier");
         return false;
     }
+
+    if(estParent(arrive,cible)){
+        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
+        return false;
+    }
     renameNode(cible,chem2);
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;
     }
-    if(estParent(arrive,cible)){
-        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
-        return false;
-    }
+    
     return moveNode(cible,arrive);
 
 
@@ -531,9 +533,9 @@ void shellAuto(char *chemin){
                 printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
                 break;
             }
-
             n_line++;
         }
+
 
         free(commande);
         free(arg1);
@@ -541,6 +543,27 @@ void shellAuto(char *chemin){
         free(buffer);
 
         if(fclose(flux) != 0){perror("Probleme fermeture de fichier...");}
+
+        puts("Voulez-vous passer à un shell manuel ?");
+
+        char *reponse = malloc(sizeof(char)*80);
+        while (true){
+            fgets(reponse,80,stdin);
+            *(reponse+strlen(reponse)-1)='\0';
+            printf("---%s---\n",reponse);
+            if(strcmp(reponse,"oui") == 0){
+                shellManuel();
+                break;
+            }
+            else if(strcmp(reponse,"non") == 0){
+                break;
+            }
+            else{
+                printf("\nRepondez par 'oui' ou 'non' : ");
+            }
+    }
+    free(reponse);
+
     }
 }
 
