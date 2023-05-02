@@ -544,7 +544,12 @@ void tree_rec(noeud *node, unsigned int profondeur, bool endOfList){
     }
 
     if(node->est_dossier){
-        printf("├─ %s",node->nom);
+        if(strcmp(node->nom,"") == 0){
+            printf("├─ /");
+        }
+        else{
+            printf("├─ %s",node->nom);
+        }
     }
     else{
         if(endOfList){
@@ -573,12 +578,6 @@ void tree_rec(noeud *node, unsigned int profondeur, bool endOfList){
  * @param node L'arborescence à afficher
 */
 void tree(noeud *node){
-    if(strcmp(node->nom,"") == 0){
-        printf("/");
-    }
-    else{
-        printf("%s",node->nom);
-    }
     tree_rec(node,0,true);
     puts("");
 }
