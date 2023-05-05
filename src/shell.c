@@ -154,10 +154,7 @@ bool mv(char *chem1,char *chem2){
         puts("Dossier inexistant");
         return false;
     }
-    
     return moveNode(cible,arrive);
-
-
 }
 
 
@@ -188,6 +185,10 @@ bool cp(char *chem1,char *chem2){
 
     if(arrive == NULL){
         puts("Dossier inexistant");
+        return false;
+    }
+    if(estParent(arrive,cible)){
+        puts("Console invalide, vous essayez de déplacer un dossier dans un de ses fils");
         return false;
     }
     if(!arrive->est_dossier){
@@ -550,7 +551,6 @@ void shellAuto(char *chemin){
         while (true){
             fgets(reponse,80,stdin);
             *(reponse+strlen(reponse)-1)='\0';
-            printf("---%s---\n",reponse);
             if(strcmp(reponse,"oui") == 0){
                 shellManuel();
                 break;
