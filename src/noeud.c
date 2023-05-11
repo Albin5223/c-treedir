@@ -259,9 +259,12 @@ bool moveNode(noeud *nomade, noeud *newPere){
     liste_noeud *prev = NULL;
     liste_noeud *tmp = pere->fils;
 
+    liste_noeud * trouve = NULL;
+
     // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
     while(tmp != NULL){
         if(tmp->no == nomade){  // On trouve ou est le noeud
+            trouve = tmp;
             if(prev == NULL){       // Le noeud est au début
                 pere->fils = tmp->succ;
             }
@@ -273,7 +276,7 @@ bool moveNode(noeud *nomade, noeud *newPere){
         prev = tmp;
         tmp = tmp->succ;
     }
-
+    free(trouve);
     // ETAPE 2 : Ajouter le nomade comme fils du nouveau pere
     if(addNodeToFilsOfNode(newPere,nomade)){
         return true;
