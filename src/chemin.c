@@ -27,7 +27,6 @@ size_t nbSlash(char *s1){
 size_t longueur(char *s1){
     size_t i = 0;
     while(*(s1+i) != '/' && *(s1+i) != '\0'){
-        
         i++;
     }
     return i;
@@ -42,7 +41,7 @@ size_t longueur(char *s1){
  * @warning Il faut free la valeur de retour
 */
 char *recuperer(char *s1,size_t lon){
-    char *tab =malloc((lon+1)*sizeof(char));
+    char *tab = malloc((lon+1)*sizeof(char));
 
     for(size_t i = 0;i<lon;i++){
         *(tab+i) = *(s1+i);

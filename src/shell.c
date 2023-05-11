@@ -249,76 +249,6 @@ bool cp(char *chem1,char *chem2){
 }
 
 /**
- * Cette méthode contient une série d'instructions de test, qui modifie par la même occasion le noeud en argument
- * @param courant L'adresse du noeud qui représentera la racine des tests
- * @warning Il faut bel et bien donner l'adresse du noeud afin de pouvoir le modifier lors de l'appel à la fonction (exemple : arboDefaut(&racine))
-*/
-void arboDefaut(){
-    mkdir("Cours");
-
-    touch("Travail");
-    
-    touch("test");
-
-    mkdir("TD");
-
-    courant = cd("Cours");
-    
-    touch("Cours1");
-    touch("cours2");
-
-    
-
-    mkdir("ExempleCours");
-
-    courant = cd("ExempleCours");
-    touch("Exemple1");
-    touch("Exemple2");
-
-    courant=cd("");
-
-
-
-    courant = cd("Cours/ExempleCours");
-
-
-    rm("Exemple2");
-
-
-    courant = cd("");
-    rm("Cours/Cours1");
-
-    
-    courant =cd("Cours/ExempleCours");
-
-    courant =cd("");
-    mkdir("Test");
-
-    courant = cd ("Test");
-
-    courant = cd("/Cours");
-
-    
-    courant = cd("..");
-    courant = cd("Test");
-    
-    mkdir("Prenom");
-    courant = cd("Prenom");
-    touch("Servan");
-    touch("Albin");
-    touch("Margaux");
-    touch("Perseverance");
-    mkdir("Ville");
-    courant = cd("Ville");
-    touch("Paris");
-    touch("Berlin");
-    touch("Rome");
-    courant = cd("/");
-
-    courant =cd("");
-}
-
-/**
  * Méthode qui permet d'executer une ligne de commande directement sur le noeud courant en argument
  * @param courant L'adresse du noeud en question
  * @param commande Le contenu de la commande (exemple : ls, cd, pd, etc...)
@@ -543,7 +473,7 @@ void shellAuto(char *chemin){
             
             int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
             nb_args += (n>0) ? n : 0;
-            if(strlen(buffer) != 1){
+            if(strlen(commande) != 0){
                 if(executeCommande(commande,arg1,arg2,nb_args) == false){
                     printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
                     break;

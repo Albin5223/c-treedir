@@ -196,8 +196,9 @@ bool addNodeToFilsOfNode(noeud *pere, noeud *fils){
 void freeRecInNode(noeud *node){
     liste_noeud *tmp = node->fils;
     while (tmp != NULL){
-        freeRecInNode(tmp->no);
-        tmp = tmp->succ;
+        liste_noeud *tmp1 = tmp->succ;
+        removeNode(tmp->no);
+        tmp = tmp1;
     }
     free(node->fils);
     free(node);
@@ -213,9 +214,12 @@ void removeNode(noeud *node){
     liste_noeud *prev = NULL;
     liste_noeud *tmp = pere->fils;
 
+    liste_noeud *trouve = NULL;
+
     // ETAPE 1 : Supprimer ce noeud de la liste de fils de son père
     while(tmp != NULL){
-        if(tmp->no == node){    // On trouve ou est le noeud
+        if(tmp->no == node){   // On trouve ou est le noeud
+            trouve = tmp;
             if(prev == NULL){   // Le noeud est au début
                 pere->fils = tmp->succ;
             }
@@ -227,7 +231,10 @@ void removeNode(noeud *node){
         prev = tmp;
         tmp = tmp->succ;
     }
-
+    if(trouve != NULL){
+        free(trouve);
+    }
+    
     // ETAPE 2 : "free" tous les noeuds
     freeRecInNode(node);
 }
