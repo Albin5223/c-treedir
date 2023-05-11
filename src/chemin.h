@@ -3,6 +3,6 @@
 #include<string.h>
 
 
-size_t nbSlash(char *s1);
-size_t longueur(char *s1);
-char *recuperer(char *s1,size_t lon);
+extern size_t nbSlash(char *s1);
+extern size_t longueur(char *s1);
+extern char *recuperer(char *s1,size_t lon);

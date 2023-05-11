@@ -81,11 +81,12 @@ noeud *recupererNodeWithPath(noeud *courant,char *chem){
         size_t l = longueur(chem);
         char *sub = recuperer(chem,l);
         tmp = allerVers(tmp,sub);
+        free(sub);
         if(tmp == NULL){
             puts("chemin Inexistant");
             return NULL;
         }
-        free(sub);
+        
         chem = chem+l+1;
     }
     noeud *cible = getFils(tmp,chem);
@@ -439,29 +440,6 @@ void shellManuel(){
 
     puts("Bienvenue sur le shell C. Les commandes disponibles sont :\n- ls\n- cd\n- pwd\n- mkdir\n- touch\n- rm\n- cp\n- mv\n- print\n- tree\n- quit\n");
 
-    // Bout de code permettant de donner le choix à l'utilisateur s'il veut une arborescence par défaut ou non
-    /*
-    char *reponse = malloc(sizeof(char)*4);
-    *reponse = '\0';
-
-    printf("Voulez-vous une arborescence de test ? (oui/non) : ");
-    while (true){
-        fgets(reponse,4,stdin);
-        if(strcmp(reponse,"oui") == 0){
-            arboDefaut(courant);
-            break;
-        }
-        else if(strcmp(reponse,"non") == 0){
-            break;
-        }
-        else{
-            printf("\nRepondez par 'oui' ou 'non' : ");
-        }
-    }
-    free(reponse);
-
-    */
-
     int MAX_L_COMMANDE = 8;
     int MAX_L_ARGS = 100;
     int MAX_L_BUFFER = 2*MAX_L_ARGS + MAX_L_COMMANDE;
@@ -527,13 +505,16 @@ void shellAuto(char *chemin){
 
             nb_args = 0;
 
+            
             int n = sscanf(buffer," %s %s %s",commande,arg1,arg2);
             nb_args += (n>0) ? n : 0;
-
-            if(executeCommande(commande,arg1,arg2,nb_args) == false){
-                printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
-                break;
+            if(strlen(buffer) != 1){
+                if(executeCommande(commande,arg1,arg2,nb_args) == false){
+                    printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
+                    break;
+                }
             }
+            
             n_line++;
         }
 
@@ -581,7 +562,7 @@ int main(int argc, char *argv[]){
         puts("Trop d'arguments...");
     }
 
-    free(courant);
+    removeNode(courant->racine);
 
     return EXIT_SUCCESS;
 }
