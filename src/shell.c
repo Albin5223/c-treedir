@@ -445,6 +445,7 @@ void shellManuel(){
 void shellAuto(char *chemin){
 
     autoActived = true;
+    bool erreur = false;
     
     FILE *flux = fopen(chemin,"r");
     if(flux == NULL){perror("Probleme ouverture de fichier...");}
@@ -476,6 +477,7 @@ void shellAuto(char *chemin){
             if(strlen(commande) != 0){
                 if(executeCommande(commande,arg1,arg2,nb_args) == false){
                     printf("Il y a un soucis à la ligne %u : %s \n",n_line,buffer);
+                    erreur = true;
                     break;
                 }
             }
@@ -490,6 +492,10 @@ void shellAuto(char *chemin){
         free(buffer);
 
         if(fclose(flux) != 0){perror("Probleme fermeture de fichier...");}
+
+        if(erreur){
+            return;
+        }
 
         puts("\nVoulez-vous passer à un shell manuel ? (oui/non) : ");
 
