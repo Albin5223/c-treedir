@@ -2,8 +2,18 @@
 #include "chemin.h"
 #include<stdlib.h>
 #include<stdio.h>
+#include<ctype.h>
 
 noeud *courant;
+/*
+ * Ce boolean va être mis à "true" lorsqu'on fait appel au shellAuto, mais à quoi va servir ce boolean ?
+ * Lorsqu'on lance le shellManuel, on a le choix d'avoir ou non une arborescence par défaut, et lorsqu'on lance le shellAuto, à la fin, on a le choix de lancer un shellManuel.
+ * Sauf qu'on ne veut pas qu'en lancant le shellManuel après un shellAuto, l'utilisateur puisse initialiser une arborescence par defaut puisqu'il y en aura deja un present
+ * (l'arborescence par defaut va empieter sur l'arborescence produit avec le fichier txt, ce n'est pas ce qu'on veut)
+ * 
+ * L'arborescence par defaut du shellManuel ne pourra etre lance que s'il n'y a pas eu de shellAuto avant lui.
+*/
+bool autoActived = false;
 
 noeud *recupererNodeWithPath(noeud *courant,char *chem);
 
@@ -63,12 +73,38 @@ void pwd(){
     puts("");
 }
 
+/**
+ * Petite fonction permettant de savoir si une chaine de caractères est composée uniquement de caracteres alphanumerique ou non
+ * @param nom La chaine à verifier
+ * @return true si c'est une chaine alphanumerique, false sinon
+*/
+bool isStringAlNum(char *nom){
+    for (unsigned int i = 0; i < strlen(nom); i++){
+        if(!isalnum(*(nom+i))){
+            return false;
+        }
+    }
+    return true;
+}
+
 bool mkdir(char *nom){
-    return initDossier(courant, nom) != NULL;
+    if(isStringAlNum(nom)){
+        return initDossier(courant, nom) != NULL; 
+    }
+    else{
+        puts("Nom du fichier non-alphanumerique...");
+        return false;
+    }
 }
 
 bool touch(char *nom){
-    return initFichier(courant,nom) != NULL;
+    if(isStringAlNum(nom)){
+        return initFichier(courant,nom) != NULL;
+    }
+    else{
+        puts("Nom du fichier non-alphanumerique...");
+        return false;
+    }
 }
 
 noeud *recupererNodeWithPath(noeud *courant,char *chem){
@@ -258,7 +294,6 @@ void arboDefaut(){
     courant =cd("");
     mkdir("Test");
 
-    mv("Cours/ExempleCours","Test");
     courant = cd ("Test");
 
     courant = cd("/Cours");
@@ -279,8 +314,6 @@ void arboDefaut(){
     touch("Berlin");
     touch("Rome");
     courant = cd("/");
-    
-    cp("Test/Prenom","Cours");
 
     courant =cd("");
 }
@@ -480,6 +513,8 @@ void shellManuel(){
  * @param chemin Le chemin du fichier contenant les commandes
 */
 void shellAuto(char *chemin){
+
+    autoActived = true;
     
     FILE *flux = fopen(chemin,"r");
     if(flux == NULL){perror("Probleme ouverture de fichier...");}
@@ -526,7 +561,7 @@ void shellAuto(char *chemin){
 
         if(fclose(flux) != 0){perror("Probleme fermeture de fichier...");}
 
-        puts("Voulez-vous passer à un shell manuel ?");
+        puts("\nVoulez-vous passer à un shell manuel ? (oui/non) : ");
 
         char *reponse = malloc(sizeof(char)*80);
         while (true){
@@ -542,9 +577,8 @@ void shellAuto(char *chemin){
             else{
                 printf("\nRepondez par 'oui' ou 'non' : ");
             }
-    }
-    free(reponse);
-
+        }
+        free(reponse);
     }
 }
 
@@ -562,7 +596,9 @@ int main(int argc, char *argv[]){
         puts("Trop d'arguments...");
     }
 
-    removeNode(courant->racine);
+    // On retourne à la racine pour tout free à la fin
+    courant = cd("");
+    freeRecInNode(courant);
 
     return EXIT_SUCCESS;
 }
