@@ -5,15 +5,6 @@
 #include<ctype.h>
 
 noeud *courant;
-/*
- * Ce boolean va être mis à "true" lorsqu'on fait appel au shellAuto, mais à quoi va servir ce boolean ?
- * Lorsqu'on lance le shellManuel, on a le choix d'avoir ou non une arborescence par défaut, et lorsqu'on lance le shellAuto, à la fin, on a le choix de lancer un shellManuel.
- * Sauf qu'on ne veut pas qu'en lancant le shellManuel après un shellAuto, l'utilisateur puisse initialiser une arborescence par defaut puisqu'il y en aura deja un present
- * (l'arborescence par defaut va empieter sur l'arborescence produit avec le fichier txt, ce n'est pas ce qu'on veut)
- * 
- * L'arborescence par defaut du shellManuel ne pourra etre lance que s'il n'y a pas eu de shellAuto avant lui.
-*/
-bool autoActived = false;
 
 noeud *recupererNodeWithPath(noeud *courant,char *chem);
 
@@ -444,7 +435,6 @@ void shellManuel(){
 */
 void shellAuto(char *chemin){
 
-    autoActived = true;
     bool erreur = false;
     
     FILE *flux = fopen(chemin,"r");
