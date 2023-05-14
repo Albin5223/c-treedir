@@ -178,7 +178,7 @@ bool mv(char *chem1,char *chem2){
         puts("Le nom du fichier depasse 99 caracteres");
         return false;
     }
-    
+
     if(!isStringAlNum(chem2)){
         puts("Nom du fichier non-alphanumerique...");
         return false;
@@ -392,7 +392,7 @@ bool executeCommande(char *commande, char *arg1, char *arg2, int nb_args){
 
     else if(strcmp(commande,"tree") == 0){
         if(nb_args == 1){
-            tree(courant);
+            tree(courant->racine);
             return true;
         }
         else{
