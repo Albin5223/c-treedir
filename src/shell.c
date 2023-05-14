@@ -174,6 +174,11 @@ bool mv(char *chem1,char *chem2){
         chem2 = cible->nom;
     }
 
+    if(strlen(chem2) > NAME_LEN){
+        puts("Le nom du fichier depasse 99 caracteres");
+        return false;
+    }
+    
     if(!isStringAlNum(chem2)){
         puts("Nom du fichier non-alphanumerique...");
         return false;
@@ -226,7 +231,10 @@ bool cp(char *chem1,char *chem2){
     if(*(chem2) == '\0'){
         chem2 = cible->nom;
     }
-
+    if(strlen(chem2) > NAME_LEN){
+        puts("Le nom du fichier depasse 99 caracteres");
+        return false;
+    }
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;

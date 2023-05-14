@@ -1,8 +1,9 @@
 #include <stdbool.h>
+#define NAME_LEN 99
 
 struct noeud {
     bool est_dossier;
-    char nom [100];
+    char nom [NAME_LEN+1];
     struct noeud *pere;
     struct noeud *racine;
     struct liste_noeud *fils;
@@ -41,5 +42,5 @@ extern noeud *allerVers(noeud *courant,char *chem);
 extern void afficheCheminVersRacine(noeud *courant);
 extern noeud *getFils(noeud *courant, char *nom);
 extern bool estParent(noeud *courant, noeud *pere);
-extern void renameNode(noeud *courant, char* nouveau);
+extern bool renameNode(noeud *courant, char* nouveau);
 extern void tree(noeud *node);

@@ -33,14 +33,15 @@ unsigned int size(liste_noeud *list){
     return size;
 }
 
-void renameNode(noeud *courant, char *nouveau){
+bool renameNode(noeud *courant, char *nouveau){
+    if(strlen(nouveau) > NAME_LEN){return false;}
     int i = 0;
     while(i<strlen(nouveau)){
         *(courant->nom+i) = *(nouveau+i);
         i++;
     }
     *(courant->nom+i) = '\0';
-
+    return true;
 }
 
 /**
@@ -136,9 +137,14 @@ liste_noeud *addToListAlpha(liste_noeud *list, noeud *node){
 /**
  * Cette fonction permet d'initialiser un noeud
  * @warning Ses attributs sont initialisés à false et NULL partout (à part le nom), il faut donc les changer en fonction du contexte
+ * De plus, cette fonction renvoie NULL si le nom dépasse 99 caractères
  * @return Un noeud par défaut
 */
 noeud *initNode(char *c){
+    if(strlen(c) > NAME_LEN){
+        puts("Le nom du fichier depasse 99 caracteres");
+        return NULL;
+    }
     noeud *node = malloc(sizeof(noeud));
     assert(node != NULL);
     node->est_dossier = false;
@@ -409,6 +415,7 @@ bool verifierNomDejaExistant(noeud *p, char *nom){
 
 /**
  * Fonction qui permet d'initialiser un fichier dans un fossier
+ * @warning Cette fonction renvoie NULL si le nom dépasse 99 caractères
 */
 noeud *initFichier(noeud *pere, char *nom){
     if(verifierNomDejaExistant(pere,nom)){
@@ -416,6 +423,7 @@ noeud *initFichier(noeud *pere, char *nom){
         return NULL;
     }
     noeud *n = initNode(nom);
+    if(n == NULL){return NULL;}
     n->est_dossier=false;
     n->pere=pere;
     n->racine=pere->racine;
@@ -431,10 +439,12 @@ noeud *initFichier(noeud *pere, char *nom){
 /**
  * Cette fonction permet de créer un dossier vierge, sans père ni fils
  * @param nom Le nom du dossier
+ * @warning Cette fonction renvoie NULL si le nom dépasse 99 caractères
  * @return Le noeud du dossier
 */
 noeud *initDossierSimple(char *nom){
     noeud *dossier = initNode(nom);
+    if(dossier == NULL){return NULL;}
     dossier->est_dossier = true;
     return dossier;
 }
@@ -443,6 +453,7 @@ noeud *initDossierSimple(char *nom){
  * Cette fonction crée un nouveau dossier dans le noeud "p"
  * @param pere Le dossier dans lequel on veut créer ce dossier (le père)
  * @param nom Le nom du dossier que l'on veut créer
+ * @warning Cette fonction renvoie NULL si le nom depasse 99 caracteres
  * @return Le noeud du nouveau dossier
 */
 noeud *initDossier(noeud *pere,char *nom){
@@ -451,6 +462,7 @@ noeud *initDossier(noeud *pere,char *nom){
         return NULL;
     }
     noeud *dossier = initDossierSimple(nom);
+    if(dossier == NULL){return NULL;}
     
     dossier->racine=pere->racine;
     dossier->pere=pere;
