@@ -168,6 +168,17 @@ bool mv(char *chem1,char *chem2){
         free(sub);
         chem2 = chem2+l+1;
     }
+
+    // Cela veut dire qu'on garde le même nom d'origine
+    if(*(chem2) == '\0'){
+        chem2 = cible->nom;
+    }
+
+    if(!isStringAlNum(chem2)){
+        puts("Nom du fichier non-alphanumerique...");
+        return false;
+    }
+
     if(verifierNomDejaExistant(arrive,chem2)){
         puts("Nom deja existant dans ce dossier");
         return false;
@@ -211,6 +222,11 @@ bool cp(char *chem1,char *chem2){
         chem2 = chem2+l+1;
     }
 
+    // Cela veut dire qu'on garde le même nom d'origine
+    if(*(chem2) == '\0'){
+        chem2 = cible->nom;
+    }
+
     if(arrive == NULL){
         puts("Dossier inexistant");
         return false;
@@ -225,6 +241,10 @@ bool cp(char *chem1,char *chem2){
     }
     if(verifierNomDejaExistant(arrive,chem2)){
         puts("Nom deja existant dans ce dossier");
+        return false;
+    }
+    if(!isStringAlNum(chem2)){
+        puts("Nom du fichier non-alphanumerique...");
         return false;
     }
     
